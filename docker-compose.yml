@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mesoquick_frontend_dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - mesoquick_net
+    environment:
+      - NODE_ENV=development
+      - VITE_API_GATEWAY_URL=http://broker-gateway:8000
+    tty: true
+
+networks:
+  mesoquick_net:
+    driver: bridge

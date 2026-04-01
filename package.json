@@ -1,0 +1,12 @@
+{
+  "name": "mesoquick-frontend-workspace",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "echo 'Monorepo initialized. Run apps individually or add Turborepo.' && sleep infinity"
+  }
+}
