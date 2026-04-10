@@ -1,5 +1,6 @@
 export * from './axios.interceptor';
 export { apiClient } from './axios.interceptor';
+export * from './mock';
 
 export interface CourierStatusResponse {
   status: 'IDLE' | 'BUSY' | 'OFFLINE';

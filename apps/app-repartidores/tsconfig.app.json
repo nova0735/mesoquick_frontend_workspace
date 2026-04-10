@@ -24,5 +24,9 @@
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "../../packages/ui-kit/src",
+    "../../packages/core-network/src"
+  ]
 }

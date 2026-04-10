@@ -1,18 +1,13 @@
 import React from 'react';
-// En un futuro importaremos { BaseSidebar } de '@mesoquick/ui-kit'
-// y { Outlet, Link } de 'react-router-dom'
+import { Outlet } from 'react-router-dom';
+import { BaseSidebar } from '@mesoquick/ui-kit';
 
-export const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const MainLayout = () => {
   return (
-    <div className="flex min-h-screen bg-base">
-      {/* Aquí tu compañero implementará el <BaseSidebar> e inyectará los Links:
-        - PEDIDOS
-        - BILLETERA VIRTUAL
-        - SOPORTE TÉCNICO
-        - PERFIL
-      */}
-      <main className="flex-1 p-8 overflow-y-auto">
-        {children} {/* Aquí se renderizará el Dashboard, Billetera, etc. */}
+    <div className="flex min-h-screen bg-[#f7f7f7]">
+      <BaseSidebar />
+      <main className="flex-1 p-6">
+        <Outlet />
       </main>
     </div>
   );

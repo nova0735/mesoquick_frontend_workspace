@@ -34,7 +34,23 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
+    // 1. Global Error Handling for 5xx and Network Errors
+    const isNetworkError = error.message === 'Network Error';
+    const isServerError = error.response && [500, 502, 503, 504].includes(error.response.status);
+    
+    if (isNetworkError || isServerError) {
+      window.dispatchEvent(new CustomEvent('mesoquick:network-error', { detail: 'Reconectando con el servidor...' }));
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
+      // Circuit Breaker: Abort immediately if the 401 is from the refresh endpoint
+      if (originalRequest.url?.includes('/api/auth/refresh') || originalRequest.url?.includes('/auth/refresh')) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        window.location.href = '/login';
+        return Promise.reject(error);
+      }
+
       if (isRefreshing) {
         return new Promise<string>((resolve, reject) => {
           failedQueue.push({ resolve, reject });
