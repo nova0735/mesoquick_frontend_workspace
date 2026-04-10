@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAccountStatusStore } from '../model/useAccountStatusStore';
+import { UnlockRequestForm } from '../../request-account-unlock';
 
 /**
  * COMPONENTE DE UI: Overlay Bloqueador de Estado de Cuenta
@@ -50,14 +51,16 @@ export const AccountStatusBanner: React.FC = () => {
         </div>
         
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Atención: Cuenta Inactiva</h2>
-        <p className="text-gray-600 mb-4">
+        <p className="text-gray-600 mb-6"> {/* Aumenté un poco el margin-bottom (mb-6) */}
           Actualmente el estado de tu cuenta es <span className="font-semibold text-gray-800 uppercase">{status}</span>.
           No puedes conectarte, ver el mapa ni recibir pedidos en este momento.
         </p>
         
-        <button className="bg-[#3c606b] hover:bg-opacity-90 text-white px-6 py-2 rounded mt-6 transition-colors">
-          Contactar Soporte
-        </button>
+        {/* Renderizamos el formulario directamente. Él ya tiene su propio botón de submit */}
+        <div className="mt-4 border-t border-gray-200 pt-4 text-left">
+           <h3 className="text-sm font-semibold text-gray-700 mb-3">Solicitar Revisión / Apelación:</h3>
+           <UnlockRequestForm />
+        </div>
       </div>
     </div>
   );
