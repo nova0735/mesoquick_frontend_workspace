@@ -2,5 +2,15 @@
   "name": "@mesoquick/ui-kit",
   "version": "1.0.0",
   "private": true,
-  "main": "index.ts"
+  "type": "module",
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
 }
