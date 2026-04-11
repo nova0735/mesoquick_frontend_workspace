@@ -1,64 +1,85 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
+// ==========================================
+// THE RESILIENT AXIOS INTERCEPTOR
+// ==========================================
+// 🧩 NOTA DE ARQUITECTURA (FSD):
+// Instancia global centralizada para el manejo de red. 
+// Este interceptor maneja de forma transparente:
+// 1. Inyección automática del Token JWT.
+// 2. Refresco transparente del Token ante un 401.
+// 3. Circuit Breaker: Desconexión y redirección de seguridad si falla el refresco.
+
+// Variables de entorno inyectadas por Vite (o valores por defecto robustos)
+const baseURL = import.meta.env?.VITE_API_BASE_URL || '/api';
+const timeout = Number(import.meta.env?.VITE_TIMEOUT_MS) || 10000;
+
+// 1. Creación de la instancia
 export const apiClient = axios.create({
-  baseURL: '/api',
-  timeout: 10000,
+  baseURL,
+  timeout,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-// 1. Request: Inject 'Authorization: Bearer'
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('accessToken');
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
+// Variables para manejar concurrencia en el refresco de tokens (Mutex)
 let isRefreshing = false;
-let failedQueue: Array<{ resolve: (token: string) => void; reject: (err: any) => void }> = [];
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (reason?: any) => void;
+}> = [];
 
-const processQueue = (error: any, token: string | null = null) => {
+const processQueue = (error: AxiosError | null, token: string | null = null) => {
   failedQueue.forEach((prom) => {
     if (error) {
       prom.reject(error);
     } else {
-      prom.resolve(token as string);
+      prom.resolve(token);
     }
   });
   failedQueue = [];
 };
 
-// 2 & 3. Response: 401 Silence Refresh & Circuit Breaker
+// ==========================================
+// REQUEST INTERCEPTOR: Inyección de Token
+// ==========================================
+apiClient.interceptors.request.use(
+  (config) => {
+    // Obtenemos el token del almacenamiento local (o Zustand persist)
+    const token = localStorage.getItem('access_token');
+    
+    if (token && config.headers) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// ==========================================
+// RESPONSE INTERCEPTOR & CIRCUIT BREAKER
+// ==========================================
 apiClient.interceptors.response.use(
-  (response) => response,
-  async (error) => {
+  (response: AxiosResponse) => response,
+  async (error: AxiosError) => {
     const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean };
 
-    // 1. Global Error Handling for 5xx and Network Errors
-    const isNetworkError = error.message === 'Network Error';
-    const isServerError = error.response && [500, 502, 503, 504].includes(error.response.status);
-    
-    if (isNetworkError || isServerError) {
-      window.dispatchEvent(new CustomEvent('mesoquick:network-error', { detail: 'Reconectando con el servidor...' }));
-    }
+    // 1. Log Global de Observabilidad antes de procesar el error
+    console.error(`[Network Fallback] 🔴 Request fallida a ${originalRequest?.url}`, error.response?.data || error.message);
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      // Circuit Breaker: Abort immediately if the 401 is from the refresh endpoint
-      if (originalRequest.url?.includes('/api/auth/refresh') || originalRequest.url?.includes('/auth/refresh')) {
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        window.location.href = '/login';
-        return Promise.reject(error);
-      }
-
+    // 2. Atrapar Error 401 Unauthorized
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      
+      // Si ya hay un refresco en progreso, encolar esta petición
       if (isRefreshing) {
-        return new Promise<string>((resolve, reject) => {
+        return new Promise(function (resolve, reject) {
           failedQueue.push({ resolve, reject });
         })
           .then((token) => {
-            if (originalRequest.headers) {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`;
-            }
+            if (originalRequest.headers) originalRequest.headers['Authorization'] = 'Bearer ' + token;
             return apiClient(originalRequest);
           })
           .catch((err) => Promise.reject(err));
@@ -68,27 +89,36 @@ apiClient.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        const { data } = await axios.post('/api/auth/refresh', { token: refreshToken });
+        // Intentar refrescar el token
+        const refreshToken = localStorage.getItem('refresh_token');
+        if (!refreshToken) throw new Error("No hay refresh_token disponible");
 
-        localStorage.setItem('accessToken', data.accessToken);
-        apiClient.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`;
-
-        processQueue(null, data.accessToken);
-        return apiClient(originalRequest);
-      } catch (refreshError) {
-        processQueue(refreshError, null);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
+        const { data } = await axios.post(`${baseURL}/auth/refresh`, { refresh_token: refreshToken });
+        const newToken = data.access_token;
         
-        // Circuit Breaker: Redirect to login
-        window.location.href = '/login';
+        localStorage.setItem('access_token', newToken);
+        if (originalRequest.headers) originalRequest.headers['Authorization'] = `Bearer ${newToken}`;
+        
+        processQueue(null, newToken);
+        return apiClient(originalRequest); // Reintentar la petición original con éxito
+      } catch (refreshError) {
+        // 🚨 CIRCUIT BREAKER 🚨
+        // El refresco falló. Limpiamos sesión y forzamos salida.
+        processQueue(refreshError as AxiosError, null);
+        console.error("CRITICAL: 💥 Circuit Breaker Activado. Sesión invalidada. Redirigiendo al Login...");
+        
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+        localStorage.removeItem('user_context'); // Limpieza general
+        
+        window.location.href = '/login'; // Force Redirect
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
       }
     }
 
+    // Si no es un 401, o ya fue reintentado, rechazar normalmente
     return Promise.reject(error);
   }
 );
