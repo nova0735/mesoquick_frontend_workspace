@@ -11,10 +11,17 @@ import { DashboardPage } from '../../pages/dashboard/DashboardPage';
 import { WalletPage } from '../../pages/wallet/WalletPage';
 import { SupportPage } from '../../pages/support/SupportPage';
 import { ProfilePage } from '../../pages/profile/ProfilePage';
+
+import { RegisterWizard } from '../../features/register-courier/ui/RegisterWizard';
+
 // 3. Importamos la página 404
 import { NotFoundPage } from '../../pages/not-found';
 
 export const router = createBrowserRouter([
+  {
+    path: '/registro',
+    element: <RegisterWizard />
+  },
   {
     path: '/',
     // Envolvemos el Layout Principal con el ErrorBoundary global
