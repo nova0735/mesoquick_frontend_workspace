@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 // Importamos las features correspondientes siguiendo FSD
+import { REGISTRATION_LINKS } from '../../shared/config/app-registry';
 import { LoginForm } from '../../features/authenticate-user';
 import { ResetPasswordForm } from '../../features/reset-password';
 
@@ -44,6 +45,15 @@ export const LoginPage: React.FC = () => {
             </button>
           </>
         )}
+        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+          <p className="text-sm text-gray-500 mb-3">¿Aún no eres parte de MesoQuick?</p>
+          <button
+            onClick={() => window.location.href = '/register'} 
+            className="w-full bg-white border-2 border-[#3c606b] text-[#3c606b] hover:bg-[#3c606b] hover:text-white font-semibold py-2 rounded transition-colors duration-300"
+          >
+            Crear cuenta
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -1,2 +1,2 @@
-// Exportación pública de la página para adherirnos a FSD (Public API)
-export { LoginPage } from './LoginPage';
+// Exportación pública de la página (Public API de FSD)
+export { RegisterSelectionPage } from './register-selection/RegisterSelectionPage';
