@@ -1,5 +1,8 @@
 import { createBrowserRouter } from 'react-router-dom';
 
+// 0. Importamos el ErrorBoundary para proteger la aplicación
+import { ErrorBoundary } from '../providers/ErrorBoundary';
+
 // 1. Importamos el Cascarón Principal (El que tiene el Sidebar)
 import { MainLayout } from '../layout/MainLayout';
 
@@ -8,11 +11,18 @@ import { DashboardPage } from '../../pages/dashboard/DashboardPage';
 import { WalletPage } from '../../pages/wallet/WalletPage';
 import { SupportPage } from '../../pages/support/SupportPage';
 import { ProfilePage } from '../../pages/profile/ProfilePage';
+// 3. Importamos la página 404
+import { NotFoundPage } from '../../pages/not-found';
 
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <MainLayout />, // <-- El Layout envuelve la pantalla
+    // Envolvemos el Layout Principal con el ErrorBoundary global
+    element: (
+      <ErrorBoundary>
+        <MainLayout />
+      </ErrorBoundary>
+    ),
     children: [
       { 
         index: true, 
@@ -33,6 +43,10 @@ export const router = createBrowserRouter([
       { 
         path: 'profile', 
         element: <ProfilePage /> 
+      },
+      {
+        path: '*', // Ruta comodín (Wildcard) que atrapa todo lo no definido arriba
+        element: <NotFoundPage />
       }
     ]
   }
