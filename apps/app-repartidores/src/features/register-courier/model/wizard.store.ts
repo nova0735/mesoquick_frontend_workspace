@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { registerCourierRequest } from '../api/register.api';
-
+import { submitCourierRegistration } from '../api/register.api';
 export interface RegisterDTO {
   firstName: string;
   lastName: string;
@@ -71,7 +70,7 @@ export const useRegisterWizardStore = create<WizardState & WizardActions>((set, 
         }
       });
 
-      await registerCourierRequest(formData);
+      await submitCourierRegistration(formData);
       set({ isSuccess: true, isLoading: false });
     } catch (error: any) {
       const errorMsg = error.response?.data?.message || 'Error al procesar el registro. Intenta de nuevo.';

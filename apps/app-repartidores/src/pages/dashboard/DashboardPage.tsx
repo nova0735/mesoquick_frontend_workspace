@@ -1,32 +1,30 @@
 import React from 'react';
-import { AccountGuard } from '../../features/check-account-status';
-import { StatusToggle } from '../../features/toggle-courier-status';
+import { MapViewer } from '@mesoquick/ui-kit';
 
-/**
- * PÁGINA: Dashboard del Repartidor
- * 
- * 🧩 NOTA DE ARQUITECTURA FSD:
- * Capa de Composición (`pages`). Aquí es donde las Features interactúan visualmente.
- * Las features no se conocen entre ellas, la página es la encargada de ensamblarlas.
- */
 export const DashboardPage: React.FC = () => {
   return (
-    <AccountGuard>
-      <div className="min-h-screen bg-gray-50 flex flex-col">
-        {/* Layout Header */}
-        <header className="bg-white shadow-sm px-6 py-4 flex justify-between items-center border-b border-gray-200">
-          <h1 className="text-xl font-bold text-[#3c606b]">MesoQuick Repartidor</h1>
-          {/* Inyectamos el interruptor de estado aislado */}
-          <StatusToggle />
-        </header>
-
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 flex items-center justify-center">
-          <p className="text-gray-400 text-lg">
-            Área de mapa y pedidos entrantes...
-          </p>
-        </main>
+    <div className="p-8 flex flex-col gap-6 animate-fadeIn">
+      {/* Header según el diseño original */}
+      <div className="flex justify-between items-center border-b pb-4">
+        <h1 className="text-3xl font-bold text-[#3c606b]">Dashboard Principal</h1>
+        <div className="flex items-center gap-2 text-xs font-bold text-gray-400">
+           Desconectado <div className="w-10 h-5 bg-gray-200 rounded-full relative">
+             <div className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full shadow-sm"></div>
+           </div>
+        </div>
       </div>
-    </AccountGuard>
+
+      {/* Área de Inyección para el Dev 2 */}
+      <div className="border-2 border-dashed border-gray-100 rounded-2xl min-h-[500px] flex flex-col relative overflow-hidden">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+          <p className="text-gray-300 font-bold uppercase tracking-widest text-sm bg-white/80 px-4 py-2 rounded-full">
+            [ÁREA DE INYECCIÓN - DEV 2: Colocar aquí el mapa y feed de pedidos]
+          </p>
+        </div>
+        
+        {/* El MapViewer se queda de fondo como base */}
+        <MapViewer />
+      </div>
+    </div>
   );
 };
