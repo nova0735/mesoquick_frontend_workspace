@@ -3,3 +3,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* MesoQuick Global Theme */
+@layer base {
+  :root {
+    --color-primary: #3c606b; /* El azul-gris de tu manual */
+    --color-primary-dark: #2a454d;
+    --color-bg-base: #f7f7f7;
+    --color-text-base: #1f2937;
+    --font-family-base: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    @apply bg-[var(--color-bg-base)] text-[var(--color-text-base)] font-[var(--font-family-base)] antialiased;
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-semibold text-[var(--color-primary)];
+  }
+}
