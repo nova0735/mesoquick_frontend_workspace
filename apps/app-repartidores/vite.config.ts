@@ -10,11 +10,12 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       '/api': {
-        target: 'http://broker-gateway:8000',
+        target: 'http://localhost:8000',
         changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
       '/ws': {
-        target: 'ws://broker-gateway:8000',
+        target: 'ws://localhost:8000',
         ws: true,
       }
     },
