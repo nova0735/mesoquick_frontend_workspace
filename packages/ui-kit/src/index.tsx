@@ -6,3 +6,4 @@ export { MapViewer } from './components/MapViewer';
 // Otros componentes
 export { BaseSidebar } from './components/BaseSidebar';
 export { Button } from './components/Button';
+export { ActionDropdownMenu } from './components/ActionDropdownMenu';
