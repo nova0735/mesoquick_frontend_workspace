@@ -17,7 +17,7 @@ import { RegisterWizard } from '../../features/register-courier/ui/RegisterWizar
 // 3. Importamos la página 404
 import { NotFoundPage } from '../../pages/not-found';
 
-export const router = createBrowserRouter([
+export const appRouter = createBrowserRouter([
   {
     path: '/registro',
     element: <RegisterWizard />
