@@ -1,19 +1,25 @@
-export type TransactionType = 'CREDIT' | 'DEBT' | 'WITHDRAWAL' | 'PAYMENT';
+export type PaymentMethod = 'CASH' | 'CARD';
+export type MorosityState = 'NONE' | 'GRACE_PERIOD_WARNING' | 'BLOCKED_CRITICAL_DEBT';
 
-export interface WalletTransaction {
-  id: string;
-  orderId?: string;
-  amount: number;
-  type: TransactionType;
-  description: string;
+export interface TransactionRecord {
+  transactionId: string;
+  orderId: string;
   date: string;
+  totalOrderAmount: number;
+  earnedFee: number;
+  paymentMethod: PaymentMethod;
   resultingBalance: number;
+  isDebtSettled: boolean;
 }
 
-export interface WalletSummary {
-  favorableBalance: number;
-  debtToApp: number;
+export interface WalletBalances {
+  positiveBalance: number;
+  appDebt: number;
   totalEarned: number;
-  isGracePeriodActive: boolean;
-  isCriticallySuspended: boolean;
+}
+
+export interface WalletSummaryResponse {
+  balances: WalletBalances;
+  morosityState: MorosityState;
+  transactions: TransactionRecord[];
 }
