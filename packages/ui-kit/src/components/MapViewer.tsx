@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface MapViewerProps {
   center?: { lat: number; lng: number };
   zoom?: number;
@@ -9,7 +7,6 @@ interface MapViewerProps {
 
 export const MapViewer: React.FC<MapViewerProps> = ({ 
   center = { lat: 14.6349, lng: -90.5069 }, 
-  zoom = 14,
   className = ""
 }) => {
   return (

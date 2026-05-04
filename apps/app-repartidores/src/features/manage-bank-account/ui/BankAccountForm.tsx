@@ -9,7 +9,7 @@ import { BankAccountType, UpdateBankAccountRequest } from '../../../entities/ban
 const bankAccountSchema = z.object({
   bankId: z.string().min(1, 'Please select a bank.'),
   accountType: z.enum(['MONETARY', 'SAVINGS'], {
-    errorMap: () => ({ message: 'Please select an account type.' })
+    error: 'Please select an account type.'
   }),
   accountNumber: z.string().min(10, 'Account number must be at least 10 digits.')
 });

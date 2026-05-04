@@ -1,6 +1,5 @@
 import React from 'react';
 import { useStatusUpdateStore } from '../model/useStatusUpdateStore';
-import { useWalletStore } from '../../../entities/wallet/model/useWalletStore';
 
 export interface StatusStepButtonProps {
   orderId: string;
@@ -37,12 +36,6 @@ export const StatusStepButton: React.FC<StatusStepButtonProps> = ({ orderId, cur
     await changeStatus(orderId, nextStatus);
     
     if (nextStatus === 'DELIVERED') {
-      useWalletStore.getState().addTransaction({
-        id: Date.now().toString(),
-        orderId,
-        type: 'DELIVERY_EARNING',
-        timestamp: new Date().toISOString()
-      });
       onDelivered?.();
     }
   };

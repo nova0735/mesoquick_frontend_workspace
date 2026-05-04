@@ -23,3 +23,7 @@ export interface WalletSummaryResponse {
   morosityState: MorosityState;
   transactions: TransactionRecord[];
 }
+
+export interface GenericApiResponse {
+  message: string;
+}

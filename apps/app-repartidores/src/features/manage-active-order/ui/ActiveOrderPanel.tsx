@@ -13,11 +13,6 @@ export const ActiveOrderPanel: React.FC<ActiveOrderPanelProps> = ({ StatusStepBu
     return null;
   }
 
-  const menuOptions = [
-    { label: 'Contact Support', onClick: () => console.log('Support clicked') },
-    { label: 'Cancel Order', onClick: () => console.log('Cancel clicked') }
-  ];
-
   return (
     <div className="flex flex-col h-full w-full bg-gray-50 overflow-hidden">
       {/* Top Bar */}
@@ -25,7 +20,10 @@ export const ActiveOrderPanel: React.FC<ActiveOrderPanelProps> = ({ StatusStepBu
         <h2 className="text-lg font-bold text-gray-800">
           Order #{activeOrder.orderId?.slice(-6) || '...'}
         </h2>
-        <ActionDropdownMenu options={menuOptions} />
+        <ActionDropdownMenu 
+          orderId={activeOrder.orderId || 'UNKNOWN_ORDER'} 
+          onActionSelected={(action, id) => console.log(`Action ${action} triggered for order ${id}`)} 
+        />
       </div>
 
       {/* Middle Area: Map */}

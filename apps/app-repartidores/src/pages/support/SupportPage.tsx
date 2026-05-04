@@ -1,21 +1,27 @@
 import React from 'react';
-
-// ==========================================
-// SHELL: SupportPage (Soporte Técnico)
-// ==========================================
-// Propósito: Contenedor base para la sección de Ayuda y Soporte Técnico.
-//
-// INSTRUCCIONES PARA DESARROLLADORES:
-// Aquí se integrarán los componentes relacionados con la atención al repartidor,
-// como el chat de soporte en vivo, preguntas frecuentes (FAQs) y tickets.
+import { DirectoryList } from '../../features/view-support-directory';
+import { FaqAccordion } from '../../features/browse-faqs';
 
 export const SupportPage: React.FC = () => {
   return (
-    <div className="w-full min-h-full">
-      <h1 className="text-3xl font-bold text-[#3c606b] mb-6 tracking-tight">Soporte Técnico</h1>
-      
-      {/* ÁREA DE INYECCIÓN PARA WIDGETS DE SOPORTE */}
-      <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center text-gray-400 bg-gray-50/50"> [ÁREA DE INYECCIÓN: Colocar aquí los chats y FAQs] </div>
+    <div className="flex flex-col w-full max-w-4xl mx-auto py-8 gap-8">
+      <header>
+        <h1 className="text-3xl font-bold text-primary">Help Center</h1>
+        <p className="text-primary/70 mt-2">
+          Find answers to common questions or contact our support team directly.
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <aside className="col-span-1 flex flex-col gap-6">
+          <DirectoryList/>
+        </aside>
+
+        <section className="col-span-1 lg:col-span-2 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-2xl font-bold text-primary mb-6">Frequently Asked Questions</h2>
+          <FaqAccordion/>
+        </section>
+      </div>
     </div>
   );
 };
