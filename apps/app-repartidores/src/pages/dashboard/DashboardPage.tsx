@@ -4,6 +4,7 @@ import { ActiveOrderPanel } from '../../features/manage-active-order/ui/ActiveOr
 import { OrderFeed } from '../../features/browse-available-orders/ui/OrderFeed';
 import { StatusToggle } from '../../features/toggle-courier-status/ui/StatusToggle';
 import { StatusStepButton } from '../../features/update-order-status/ui/StatusStepButton';
+import { SupportPage } from '@/pages/support/SupportPage';
 
 export const DashboardPage: React.FC = () => {
   const activeOrder = useActiveOrderStore((state) => state.activeOrder);
@@ -99,6 +100,8 @@ export const DashboardPage: React.FC = () => {
                   )}
                 </div>
               </>
+            ) : currentView === 'soporte' ? (
+              <SupportPage />
             ) : (
               <div className="flex flex-col items-center justify-center h-64 bg-white rounded-3xl border-2 border-dashed border-[#3C606B]/20 text-center p-8 mt-12">
                 <span className="material-symbols-outlined text-5xl text-[#3C606B] mb-4">construction</span>

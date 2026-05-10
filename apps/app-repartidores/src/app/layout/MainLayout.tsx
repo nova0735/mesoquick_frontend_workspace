@@ -18,7 +18,7 @@ export const MainLayout: React.FC = () => {
           <Link to="/wallet" className="block p-3 rounded-lg hover:bg-[#2a454d] text-sm font-bold uppercase">
             Billetera Virtual
           </Link>
-          <Link to="/support" className="block p-3 rounded-lg hover:bg-[#2a454d] text-sm font-bold uppercase">
+          <Link to="/soporte" className="block p-3 rounded-lg hover:bg-[#2a454d] text-sm font-bold uppercase">
             Soporte Técnico
           </Link>
           <Link to="/profile" className="block p-3 rounded-lg hover:bg-[#2a454d] text-sm font-bold uppercase">

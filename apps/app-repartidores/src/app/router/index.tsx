@@ -44,7 +44,7 @@ export const appRouter = createBrowserRouter([
         element: <WalletPage /> 
       },
       { 
-        path: 'support', 
+        path: 'soporte', 
         element: <SupportPage /> 
       },
       { 

@@ -20,7 +20,7 @@ export const BaseSidebar: React.FC = () => {
         <Link to="/wallet" className="hover:text-white/70 transition-colors">
           BILLETERA VIRTUAL
         </Link>
-        <Link to="/support" className="hover:text-white/70 transition-colors">
+        <Link to="/soporte" className="hover:text-white/70 transition-colors">
           SOPORTE TÉCNICO
         </Link>
         <Link to="/profile" className="hover:text-white/70 transition-colors">
