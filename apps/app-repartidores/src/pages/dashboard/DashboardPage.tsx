@@ -4,11 +4,17 @@ import { ActiveOrderPanel } from '../../features/manage-active-order/ui/ActiveOr
 import { OrderFeed } from '../../features/browse-available-orders/ui/OrderFeed';
 import { StatusToggle } from '../../features/toggle-courier-status/ui/StatusToggle';
 import { StatusStepButton } from '../../features/update-order-status/ui/StatusStepButton';
-import { SupportPage } from '@/pages/support/SupportPage';
+import { SupportPage } from '../support/SupportPage';
+// 1. IMPORTAMOS EL STORE
+import { useAuthStore } from '../../entities/session/model/auth.store';
 
 export const DashboardPage: React.FC = () => {
   const activeOrder = useActiveOrderStore((state) => state.activeOrder);
   const [currentView, setCurrentView] = useState<'pedidos' | 'billetera' | 'soporte' | 'perfil'>('pedidos');
+  
+// EXTRAEMOS AL USUARIO Y LA FUNCIÓN DE LOGOUT
+  const user = useAuthStore((state) => state.user);
+  const logout = useAuthStore((state) => state.logout);
 
   return (
     <>
@@ -19,14 +25,18 @@ export const DashboardPage: React.FC = () => {
           <h1 className="text-2xl font-extrabold text-white mb-8">Meso<span className="text-[#56BD64]">Quick</span></h1>
           
           <div className="flex items-center space-x-3 mb-6 p-4 bg-white/10 rounded-2xl">
-            <div className="w-12 h-12 bg-gray-200 flex-shrink-0 rounded-full"></div>
+            <div className="w-12 h-12 bg-gray-200 flex-shrink-0 rounded-full flex items-center justify-center text-xl font-bold text-gray-500 uppercase">
+              {/* Intentamos con nombre, si no, usamos el email, si no, una 'R' */}
+              {user?.nombre?.charAt(0) || user?.email?.charAt(0) || 'R'}
+            </div>
             <div>
-              <p className="font-bold text-white">Juan Repartidor</p>
+              {/* Aquí también cambiamos a nombre o email */}
+              <p className="font-bold text-white">{user?.nombre || user?.email || 'Repartidor'}</p>
               <p className="text-xs text-[#56BD64]">Repartidor Activo</p>
             </div>
           </div>
 
-          <nav className="flex flex-col space-y-2">
+          <nav className="flex flex-col space-y-2 flex-1">
             <button 
               onClick={() => setCurrentView('pedidos')}
               className={`flex items-center space-x-4 px-4 py-3 rounded-xl transition-all ${
@@ -63,13 +73,32 @@ export const DashboardPage: React.FC = () => {
               <span className="material-symbols-outlined">person</span>
               <span>Perfil</span>
             </button>
+
+            {/* 3. BOTÓN DE CERRAR SESIÓN (ESCRITORIO) */}
+            <div className="pt-6 mt-auto">
+              <div className="border-t border-white/10 pt-4">
+                <button 
+                  onClick={logout}
+                  className="flex items-center space-x-4 px-4 py-3 w-full rounded-xl transition-all text-red-400 hover:bg-red-500 hover:text-white font-bold shadow-md"
+                >
+                  <span className="material-symbols-outlined">logout</span>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
+            </div>
           </nav>
         </aside>
 
         {/* Mobile Header */}
         <header className="md:hidden fixed top-0 w-full z-40 bg-white/90 backdrop-blur-md flex justify-between items-center px-6 py-4 shadow-sm">
           <h1 className="text-xl font-extrabold text-[#56BD64]">MesoQuick</h1>
-          <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+          <div className="flex items-center gap-4">
+            <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
+            {/* 4. BOTÓN DE CERRAR SESIÓN (MÓVIL) */}
+            <button onClick={logout} className="text-red-500 flex items-center justify-center p-1 rounded-full hover:bg-red-50">
+              <span className="material-symbols-outlined">logout</span>
+            </button>
+          </div>
         </header>
 
         {/* Main Content Area */}

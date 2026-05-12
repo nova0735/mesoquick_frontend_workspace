@@ -1,7 +1,9 @@
 import React from 'react';
 import { Outlet, Link } from 'react-router-dom';
+import { useAuthStore } from '../../entities/session/model/auth.store';
 
 export const MainLayout: React.FC = () => {
+  const logout = useAuthStore((state) => state.logout);
   return (
     <div className="flex h-screen bg-[#f7f7f7]">
       <aside className="w-64 bg-[#3c606b] text-white flex flex-col shadow-xl">
@@ -28,7 +30,10 @@ export const MainLayout: React.FC = () => {
 
         {/* Footer del Sidebar */}
         <div className="p-4 border-t border-[#2a454d]">
-          <button className="text-xs font-bold uppercase opacity-60 hover:opacity-100 transition-opacity">
+          <button 
+            onClick={logout} 
+            className="text-xs font-bold uppercase opacity-60 hover:opacity-100 transition-opacity"
+          >
             Cerrar Sesión
           </button>
         </div>
