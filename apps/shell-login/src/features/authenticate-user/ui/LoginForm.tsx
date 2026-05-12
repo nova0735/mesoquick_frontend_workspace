@@ -20,8 +20,16 @@ export const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Delegamos la lógica al store de Zustand
-    await login(email, password);
+    try {
+      // El store hace todo el trabajo sucio
+      await login(email, password);
+      
+      // Si el login no lanzó error, saltamos a la app de repartidores
+      window.location.href = 'http://localhost:5174/dashboard'; 
+    } catch (err) {
+      console.error("Login fallido:", err);
+      // El error visual ya se maneja mapeando la variable `error` del store
+    }
   };
 
   return (
