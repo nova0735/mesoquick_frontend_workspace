@@ -1,4 +1,5 @@
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios from 'axios';
+import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 
 // ==========================================
 // THE RESILIENT AXIOS INTERCEPTOR
@@ -111,7 +112,7 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user_context'); // Limpieza general
         
-        window.location.href = '/login'; // Force Redirect
+        window.location.href = 'http://localhost:5173/login'; // Force Redirect to Shell Login
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;

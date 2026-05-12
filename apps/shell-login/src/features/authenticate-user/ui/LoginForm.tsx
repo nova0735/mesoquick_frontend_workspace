@@ -23,7 +23,9 @@ export const LoginForm: React.FC = () => {
     try {
       // El store hace todo el trabajo sucio
       await login(email, password);
-      
+      // En tu handleSubmit después de await login(...)
+      const token = useAuthStore.getState().token; // Obtenemos el token recién guardado
+      window.location.href = `http://localhost:5174/dashboard?token=${token}`;
       // Si el login no lanzó error, saltamos a la app de repartidores
       window.location.href = 'http://localhost:5174/dashboard'; 
     } catch (err) {
