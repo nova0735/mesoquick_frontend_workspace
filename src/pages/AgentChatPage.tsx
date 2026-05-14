@@ -1,10 +1,12 @@
+import { AgentChatWindow } from '@features/support';
+
 export default function AgentChatPage() {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-semibold text-text-heading mb-2">
-        Chat con Agente
+    <div className="max-w-2xl mx-auto">
+      <h1 className="text-2xl font-semibold text-text-heading mb-4">
+        Chat con agente
       </h1>
-      <p className="text-text">Esta página está en construcción.</p>
+      <AgentChatWindow />
     </div>
   );
 }
