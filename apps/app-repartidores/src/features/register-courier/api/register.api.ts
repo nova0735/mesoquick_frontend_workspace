@@ -1,7 +1,6 @@
-import { apiClient } from '@mesoquick/core-network';
+import { AuthAPI } from '@mesoquick/core-network';
 
-export const submitCourierRegistration = async (formData: FormData) => { 
-  return await apiClient.post('/courier/register', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  });
+// Recibe un JSON (payload) y lo pasa al Broker
+export const submitCourierRegistration = async (payload: any) => { 
+  return await AuthAPI.register(payload);
 };

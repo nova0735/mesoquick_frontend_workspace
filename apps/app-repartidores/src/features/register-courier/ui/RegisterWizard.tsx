@@ -1,115 +1,27 @@
-import { useRegisterWizardStore } from '../model/wizard.store';
+import { useWizardStore } from '../model/useWizardStore';
+import { Step1PersonalInfo } from './steps/Step1PersonalInfo';
+import { Step2Documentation } from './steps/Step2Documentation';
+import { Step3Vehicle } from './steps/Step3Vehicle';
+import { Step4Finances } from './steps/Step4Finances';
 
 // ==========================================
-// SUB-COMPONENTES (Pasos del Wizard)
+// COMPONENTE DE REVISIÓN FINAL
 // ==========================================
-
-const PersonalInfoStep = () => {
-  const { dto, updateData } = useRegisterWizardStore();
-  return (
-    <div className="flex flex-col gap-4 animate-fadeIn">
-      <h2 className="text-xl font-bold text-[#3c606b]">Información Personal</h2>
-      <input
-        type="text"
-        placeholder="Nombre"
-        value={dto.firstName}
-        onChange={(e) => updateData({ firstName: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-      <input
-        type="text"
-        placeholder="Apellidos"
-        value={dto.lastName}
-        onChange={(e) => updateData({ lastName: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-      <input
-        type="email"
-        placeholder="Correo electrónico"
-        value={dto.email}
-        onChange={(e) => updateData({ email: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-      <input
-        type="tel"
-        placeholder="Teléfono"
-        value={dto.phone}
-        onChange={(e) => updateData({ phone: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-      <input
-        type="password"
-        placeholder="Contraseña"
-        value={dto.password}
-        onChange={(e) => updateData({ password: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-    </div>
-  );
-};
-
-const VehicleInfoStep = () => {
-  const { dto, updateData } = useRegisterWizardStore();
-  return (
-    <div className="flex flex-col gap-4 animate-fadeIn">
-      <h2 className="text-xl font-bold text-[#3c606b]">Datos del Vehículo</h2>
-      <select
-        value={dto.vehicleType}
-        onChange={(e) => updateData({ vehicleType: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      >
-        <option value="MOTORCYCLE">Motocicleta</option>
-        <option value="BICYCLE">Bicicleta</option>
-        <option value="CAR">Automóvil</option>
-      </select>
-      <input
-        type="text"
-        placeholder="Placa del vehículo"
-        value={dto.plate}
-        onChange={(e) => updateData({ plate: e.target.value })}
-        className="p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3c606b]"
-      />
-    </div>
-  );
-};
-
-const DocumentsStep = () => {
-  const { updateData } = useRegisterWizardStore();
-  return (
-    <div className="flex flex-col gap-4 animate-fadeIn">
-      <h2 className="text-xl font-bold text-[#3c606b]">Documentación Oficial</h2>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-gray-700">Foto de Identidad (INE/DPI)</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => updateData({ idImage: e.target.files?.[0] || null })}
-          className="p-2 border rounded-lg text-sm"
-        />
-      </div>
-      <div className="flex flex-col gap-2">
-        <label className="text-sm font-semibold text-gray-700">Licencia de Conducir (Opcional para bicicleta)</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => updateData({ licenseImage: e.target.files?.[0] || null })}
-          className="p-2 border rounded-lg text-sm"
-        />
-      </div>
-    </div>
-  );
-};
 
 const ReviewSubmitStep = () => {
-  const { dto } = useRegisterWizardStore();
+  const { dto, files } = useWizardStore();
   return (
     <div className="flex flex-col gap-4 animate-fadeIn">
       <h2 className="text-xl font-bold text-[#3c606b]">Revisión de Datos</h2>
-      <div className="bg-gray-100 p-4 rounded-lg text-sm text-gray-700">
+      <div className="bg-gray-100 p-4 rounded-lg text-sm text-gray-700 space-y-2">
         <p><strong>Nombre:</strong> {dto.firstName} {dto.lastName}</p>
         <p><strong>Email:</strong> {dto.email}</p>
-        <p><strong>Vehículo:</strong> {dto.vehicleType} - {dto.plate || 'N/A'}</p>
-        <p><strong>Documentos:</strong> {dto.idImage ? 'Cargado' : 'Faltante'}</p>
+        <p><strong>Teléfono:</strong> {dto.phone}</p>
+        <p><strong>DPI / CUI:</strong> {dto.cui}</p>
+        <p><strong>NIT:</strong> {dto.nit}</p>
+        <p><strong>Vehículo:</strong> {dto.vehicleType} - {dto.licensePlate || 'N/A'}</p>
+        <p><strong>Cuenta Bancaria:</strong> {dto.bankAccountType} (ID: {dto.bankId})</p>
+        <p><strong>Documentos:</strong> {files.dpiPhoto && files.profilePhoto ? 'Cargados correctamente' : 'Faltantes'}</p>
       </div>
       <p className="text-xs text-gray-500 text-center mt-2">
         Al enviar tu solicitud, aceptas los términos y condiciones de MesoQuick.
@@ -122,7 +34,7 @@ const ReviewSubmitStep = () => {
 // 🎨 ORQUESTRADOR PRINCIPAL: RegisterWizard
 // ==========================================
 export const RegisterWizard = () => {
-  const { step, nextStep, prevStep, submit, isLoading, error, isSuccess } = useRegisterWizardStore();
+  const { step, nextStep, prevStep, submit, isLoading, error, isSuccess } = useWizardStore();
 
   if (isSuccess) {
     return (
@@ -154,17 +66,18 @@ export const RegisterWizard = () => {
         <div className="p-8">
           {/* Indicador de progreso */}
           <div className="flex justify-between mb-8">
-            {[1, 2, 3, 4].map((i) => (
+            {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className={`h-2 flex-1 mx-1 rounded-full ${step >= i ? 'bg-[#3c606b]' : 'bg-gray-200'}`} />
             ))}
           </div>
 
           {/* Switcher de Vistas */}
           <div className="min-h-[250px]">
-            {step === 1 && <PersonalInfoStep />}
-            {step === 2 && <VehicleInfoStep />}
-            {step === 3 && <DocumentsStep />}
-            {step === 4 && <ReviewSubmitStep />}
+            {step === 1 && <Step1PersonalInfo />}
+            {step === 2 && <Step2Documentation />}
+            {step === 3 && <Step3Vehicle />}
+            {step === 4 && <Step4Finances />}
+            {step === 5 && <ReviewSubmitStep />}
           </div>
 
           {/* Manejo de errores */}
@@ -193,11 +106,11 @@ export const RegisterWizard = () => {
               </button>
               <button 
                 type="button" 
-                onClick={step === 4 ? submit : nextStep} 
+                onClick={step === 5 ? submit : nextStep} 
                 disabled={isLoading} 
                 className="px-6 py-3 rounded-lg font-semibold text-white bg-[#3c606b] hover:bg-[#2a454d] shadow-md hover:shadow-lg disabled:opacity-50 transition-all flex-1 sm:flex-none"
               >
-                {isLoading ? 'Enviando...' : (step === 4 ? 'Finalizar Solicitud' : 'Siguiente')}
+                {isLoading ? 'Enviando...' : (step === 5 ? 'Finalizar Solicitud' : 'Siguiente')}
               </button>
             </div>
 

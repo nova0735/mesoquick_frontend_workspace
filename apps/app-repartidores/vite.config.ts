@@ -15,15 +15,17 @@ export default defineConfig(({ mode }) => {
       },
       proxy: {
         '/api': {
-          target: env.VITE_API_GATEWAY_URL || 'http://broker-gateway:8000',
+          // Usamos la URL de producción de Railway
+          target: 'https://broker-services-production.up.railway.app',
           changeOrigin: true,
-          secure: false,
+        secure: false, // Cambiado a false para evitar problemas de certificados SSL locales en Node
         },
         '/ws': {
-          target: env.VITE_WS_URL || 'ws://broker-gateway:8000',
+          // Usamos wss (Websocket Secure) para Railway
+          target: 'wss://broker-services-production.up.railway.app',
           ws: true,
           changeOrigin: true,
-          secure: false,
+          secure: true,
         }
       }
     },
