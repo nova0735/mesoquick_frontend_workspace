@@ -18,10 +18,10 @@ export const ActiveOrderPanel: React.FC<ActiveOrderPanelProps> = ({ StatusStepBu
       {/* Top Bar */}
       <div className="flex items-center justify-between p-4 bg-white border-b shadow-sm z-10">
         <h2 className="text-lg font-bold text-gray-800">
-          Order #{activeOrder.orderId?.slice(-6) || '...'}
+          Pedido #{activeOrder.orderId?.slice(-6) || '...'}
         </h2>
         <ActionDropdownMenu 
-          orderId={activeOrder.orderId || 'UNKNOWN_ORDER'} 
+          orderId={activeOrder.orderId || 'ORDEN_DESCONOCIDA'} 
           onActionSelected={(action, id) => console.log(`Action ${action} triggered for order ${id}`)} 
         />
       </div>
@@ -34,12 +34,12 @@ export const ActiveOrderPanel: React.FC<ActiveOrderPanelProps> = ({ StatusStepBu
       {/* Bottom Sheet */}
       <div className="bg-white border-t rounded-t-3xl shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)] p-6 flex flex-col gap-5 z-10 relative">
         <div>
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Customer</h3>
-          <p className="text-xl font-bold text-gray-800">{activeOrder.customerName || activeOrder.businessOrSenderName || 'Loading...'}</p>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Cliente</h3>
+          <p className="text-xl font-bold text-gray-800">{activeOrder.customerName || activeOrder.businessOrSenderName || 'Cargando...'}</p>
         </div>
         
         <div>
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Delivery Address</h3>
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Dirección de Entrega</h3>
           <p className="text-md font-medium text-gray-700 leading-snug">{activeOrder.destinationAddress}</p>
         </div>
 

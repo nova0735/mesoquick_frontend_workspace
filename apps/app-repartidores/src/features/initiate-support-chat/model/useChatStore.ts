@@ -26,7 +26,7 @@ export const useChatStore = create<ChatState>()(
         });
         set({ isConnected: true });
       } catch (error) {
-        console.error('Error initializing chat:', error);
+        console.error('Error al inicializar chat:', error);
       }
     },
     addMessage: (message: ChatMessage) => {

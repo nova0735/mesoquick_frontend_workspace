@@ -8,7 +8,7 @@ export interface ActionDropdownMenuProps {
 
 export const ActionDropdownMenu: React.FC<ActionDropdownMenuProps> = ({ orderId }) => {
   const actions = [
-    'Chatbot',
+    'Asistente Virtual',
     'Hablar con representante',
     'Solicitar cancelación',
     'Postular aumento de tarifa',

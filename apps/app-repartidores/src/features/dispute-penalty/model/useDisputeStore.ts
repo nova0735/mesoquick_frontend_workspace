@@ -27,7 +27,7 @@ export const useDisputeStore = create<DisputeState>((set) => ({
       const ticketRes = await createDisputeTicket({ ...payload, evidenceUrl });
       set({ isSubmitting: false, ticketId: ticketRes.ticketId });
     } catch (error: unknown) {
-      set({ isSubmitting: false, error: 'Failed to create dispute ticket.' });
+      set({ isSubmitting: false, error: 'Error al crear el ticket de disputa.' });
       throw error;
     }
   },

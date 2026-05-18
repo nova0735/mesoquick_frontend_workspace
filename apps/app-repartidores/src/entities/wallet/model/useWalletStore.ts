@@ -33,7 +33,7 @@ export const useWalletStore = create<WalletState>((set) => ({
       });
     } catch (error: unknown) {
       set({ 
-        error: 'Failed to fetch wallet summary. Please try again later.', 
+        error: 'Error al obtener el resumen de billetera. Por favor intenta de nuevo más tarde.', 
         isLoading: false 
       });
     }

@@ -35,7 +35,7 @@ export const useChatbotStore = create<ChatbotState>()(
         }
       } catch (error) {
         set({ isTyping: false });
-        console.error('Error sending message:', error);
+        console.error('Error al enviar mensaje:', error);
       }
     },
   }))
