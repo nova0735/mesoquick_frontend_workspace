@@ -5,8 +5,11 @@ import {
   ProductList,
   useBusinessDetail,
 } from '@features/catalog';
+import { useCartActions, DifferentBusinessModal } from '@features/cart';
 import { EmptyState } from '@shared/ui';
 import { ROUTES } from '@app/router/routes';
+import type { Product } from '@shared/types';
+import { toast } from '@shared/ui';
 
 function BusinessDetailSkeleton() {
   return (
@@ -36,33 +39,52 @@ export default function BusinessDetailPage() {
   const { business, products, isLoading, error } =
     useBusinessDetail(businessId);
 
-  if (isLoading) {
-    return <BusinessDetailSkeleton />;
-  }
+  // Hook que encapsula la regla del comercio único.
+  // Si hay conflicto, isConflictOpen se vuelve true y mostramos el modal.
+  const {
+    tryAddToCart,
+    confirmReplace,
+    cancelReplace,
+    isConflictOpen,
+    conflictCurrentBusiness,
+    conflictIncomingBusiness,
+  } = useCartActions();
 
-  if (error || !business) {
-    return (
-      <EmptyState
-        icon={<AlertCircle className="w-12 h-12" />}
-        title="Comercio no encontrado"
-        description="No pudimos cargar este comercio. Pudo haber sido eliminado o el link es invalido."
-        action={
-          <Link
-            to={ROUTES.CATALOG}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded bg-accent text-white text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Volver al catalogo
-          </Link>
-        }
-      />
-    );
+  /**
+   * Callback que se pasa a ProductList → ProductCard.
+   * Inyecta businessId y businessName desde el detalle del comercio actual,
+   * porque ProductCard solo conoce el producto, no el comercio dueño.
+   */
+ const handleAddToCart = (product: Product) => {
+  if (!business) return;
+  const result = tryAddToCart({
+    product,
+    businessId: business.id,
+    businessName: business.name,
+  });
+
+  // Solo mostramos el toast si se agregó exitosamente.
+  // Si hubo conflicto de comercio, se abre el modal — no queremos
+  // mostrar también el toast porque sería ruido.
+  if (result.success) {
+    toast.success(`${product.name} agregado al carrito`);
   }
+};
 
   return (
     <div className="space-y-8">
       <BusinessHeader business={business} />
-      <ProductList products={products} />
+      <ProductList products={products} onAddToCart={handleAddToCart} />
+
+      {/* Modal de la regla del comercio único.
+          Solo aparece si tryAddToCart detectó un conflicto. */}
+      <DifferentBusinessModal
+        isOpen={isConflictOpen}
+        currentBusinessName={conflictCurrentBusiness}
+        incomingBusinessName={conflictIncomingBusiness}
+        onConfirm={confirmReplace}
+        onCancel={cancelReplace}
+      />
     </div>
   );
 }
