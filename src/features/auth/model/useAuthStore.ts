@@ -1,11 +1,11 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { registerUser } from '../api/auth.api';
-import type { AuthStore, RegisterFormData } from './auth.types';
+import type { AuthStore, RegisterFormData, AuthUser } from './auth.types';
 
 export const useAuthStore = create<AuthStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       isAuthenticated: false,
       isLoading: false,
@@ -21,6 +21,18 @@ export const useAuthStore = create<AuthStore>()(
             err instanceof Error ? err.message : 'Error al registrarse';
           set({ error: message, isLoading: false });
         }
+      },
+
+      /**
+       * Actualiza campos editables del perfil del usuario actual.
+       * Por ahora solo permite cambiar telefono y direccion principal.
+       * Email y nombre no se editan (email es identificador, nombre suele
+       * requerir verificacion).
+       */
+      updateProfile: (changes: Partial<Pick<AuthUser, 'phone' | 'defaultAddress'>>) => {
+        const current = get().user;
+        if (!current) return;
+        set({ user: { ...current, ...changes } });
       },
 
       logout: () => {

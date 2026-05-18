@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import { User, MapPin, Phone, Mail, LogOut } from 'lucide-react';
+import { useNavigate, Link } from 'react-router-dom';
+import { User, MapPin, Phone, Mail, LogOut, Pencil } from 'lucide-react';
 import { Card, Button } from '@shared/ui';
 import { ROUTES } from '@app/router/routes';
 import { useAuthStore } from '@features/auth/model/useAuthStore';
@@ -45,7 +45,16 @@ export default function ProfilePage() {
 
       {/* Datos del perfil */}
       <Card className="p-4 border border-border space-y-4">
-        <h2 className="font-semibold text-text-heading">Información</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-semibold text-text-heading">Información</h2>
+          <Link
+            to={ROUTES.PROFILE_EDIT}
+            className="inline-flex items-center gap-1 text-sm text-accent hover:opacity-80 transition-opacity"
+          >
+            <Pencil className="w-3.5 h-3.5" />
+            Editar
+          </Link>
+        </div>
 
         <div className="flex items-center gap-3">
           <div className="bg-accent-bg p-2 rounded-lg">

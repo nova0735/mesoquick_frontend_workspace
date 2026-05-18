@@ -5,8 +5,10 @@ import {
   ProductList,
   useBusinessDetail,
 } from '@features/catalog';
-import { EmptyState } from '@shared/ui';
+import { useCartActions, DifferentBusinessModal } from '@features/cart';
+import { EmptyState, toast } from '@shared/ui';
 import { ROUTES } from '@app/router/routes';
+import type { Product } from '@shared/types';
 
 function BusinessDetailSkeleton() {
   return (
@@ -36,10 +38,44 @@ export default function BusinessDetailPage() {
   const { business, products, isLoading, error } =
     useBusinessDetail(businessId);
 
+  // Hook que encapsula la regla del comercio único.
+  // Si hay conflicto, isConflictOpen se vuelve true y mostramos el modal.
+  const {
+    tryAddToCart,
+    confirmReplace,
+    cancelReplace,
+    isConflictOpen,
+    conflictCurrentBusiness,
+    conflictIncomingBusiness,
+  } = useCartActions();
+
+  /**
+   * Callback que se pasa a ProductList → ProductCard.
+   * Inyecta businessId y businessName desde el detalle del comercio actual,
+   * porque ProductCard solo conoce el producto, no el comercio dueño.
+   */
+  const handleAddToCart = (product: Product) => {
+    if (!business) return;
+    const result = tryAddToCart({
+      product,
+      businessId: business.id,
+      businessName: business.name,
+    });
+
+    // Solo mostramos el toast si se agregó exitosamente.
+    // Si hubo conflicto de comercio, se abre el modal — no queremos
+    // mostrar también el toast porque sería ruido.
+    if (result.success) {
+      toast.success(`${product.name} agregado al carrito`);
+    }
+  };
+
+  // Estado de carga
   if (isLoading) {
     return <BusinessDetailSkeleton />;
   }
 
+  // Estado de error o sin datos: empty state con botón de volver
   if (error || !business) {
     return (
       <EmptyState
@@ -59,10 +95,22 @@ export default function BusinessDetailPage() {
     );
   }
 
+  // En este punto TypeScript sabe que business no es null
+  // gracias al narrowing del if anterior.
   return (
     <div className="space-y-8">
       <BusinessHeader business={business} />
-      <ProductList products={products} />
+      <ProductList products={products} onAddToCart={handleAddToCart} />
+
+      {/* Modal de la regla del comercio único.
+          Solo aparece si tryAddToCart detectó un conflicto. */}
+      <DifferentBusinessModal
+        isOpen={isConflictOpen}
+        currentBusinessName={conflictCurrentBusiness}
+        incomingBusinessName={conflictIncomingBusiness}
+        onConfirm={confirmReplace}
+        onCancel={cancelReplace}
+      />
     </div>
   );
 }

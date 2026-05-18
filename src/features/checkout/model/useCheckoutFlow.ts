@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import { useCheckoutStore } from './useCheckoutStore';
 import { useCartStore } from '@features/cart/model/useCartStore';
+import { useOrdersStore } from '@features/orders';
 import { submitOrder } from '@features/checkout/api/checkout.api';
-import { buildRoute } from '@app/router/routes';
+import { ROUTES } from '@app/router/routes';
+import { userMock } from '@shared/mocks';
 import type { AddressFormData, PaymentFormData } from './checkout.types';
+import type { Order } from '@features/orders';
+import { toast } from '@shared/ui';
 
 /**
  * Hook de orquestación del checkout.
@@ -17,6 +21,7 @@ export function useCheckoutFlow() {
   const currentBusinessId = useCartStore((s) => s.currentBusinessId);
   const currentBusinessName = useCartStore((s) => s.currentBusinessName);
   const clearCart = useCartStore((s) => s.clearCart);
+  const addOrder = useOrdersStore((s) => s.addOrder);
 
   const DELIVERY_FEE = 15;
   const total = cartSubtotal + DELIVERY_FEE - store.discount;
@@ -49,10 +54,42 @@ export function useCheckoutFlow() {
         couponCode: store.appliedCoupon ?? undefined,
       });
 
+      // Construir el objeto Order completo y agregarlo al store de orders.
+      // Esto hace que el pedido aparezca en "Mis pedidos" y permite el tracking
+      // sin necesidad de re-fetch del backend.
+      const newOrder: Order = {
+        id: orderId,
+        userId: userMock.id,
+        businessId: currentBusinessId,
+        businessName: currentBusinessName ?? '',
+        status: 'pending',
+        paymentMethod: store.paymentData.method,
+        deliveryAddress: store.addressData.address,
+        items: cartItems.map((item) => ({
+          productId: item.product.id,
+          productName: item.product.name,
+          quantity: item.quantity,
+          price: item.product.price,
+          subtotal: item.product.price * item.quantity,
+        })),
+        subtotal: cartSubtotal,
+        deliveryFee: DELIVERY_FEE,
+        discount: store.discount,
+        total,
+        createdAt: new Date().toISOString(),
+        estimatedDelivery: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        couponCode: store.appliedCoupon ?? undefined,
+      };
+
+      addOrder(newOrder);
       store.setConfirmedOrder(orderId);
       clearCart();
       store.resetCheckout();
-      navigate(buildRoute.orderConfirmation(orderId));
+
+      // Vamos directo a "Mis pedidos" para que el usuario vea su pedido nuevo
+      // arriba de la lista (la confirmación se omite por decisión de UX).
+      toast.success('¡Pedido confirmado! Te avisaremos cuando esté en camino.');
+      navigate(ROUTES.ORDERS);
     } finally {
       store.setSubmitting(false);
     }

@@ -23,6 +23,7 @@ export const ROUTES = {
 
   // Perfil
   PROFILE: '/perfil',
+  PROFILE_EDIT: '/perfil/editar',
 
   // Soporte
   SUPPORT: '/soporte',
