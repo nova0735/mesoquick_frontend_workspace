@@ -59,6 +59,10 @@ function StatItem({ icon, label, value }: StatItemProps) {
 }
 
 export default function BusinessHeader({ business }: BusinessHeaderProps) {
+  // Guarda defensiva: si business es null en un render intermedio
+  // (puede pasar al combinar varios useEffect/Zustand), no renderizamos nada.
+  if (!business) return null;
+
   const statusDisplay = STATUS_DISPLAY[business.status];
   const categoryLabel = CATEGORY_LABEL[business.category];
 
