@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFeedStore } from '../model/useFeedStore';
 import { formatQuetzales } from '../../../shared/utils/currency';
+import { useWalletStore } from '../../../entities/wallet/model/useWalletStore';
 
 export interface OrderFeedProps {
   onPreviewClick?: (orderId: string) => void;
@@ -8,6 +9,7 @@ export interface OrderFeedProps {
 
 export const OrderFeed: React.FC<OrderFeedProps> = ({ onPreviewClick }) => {
   const { availableOrders } = useFeedStore();
+  const totalEarned = useWalletStore((state) => state.balances.totalEarned);
 
   return (
     <div className="w-full px-4 md:px-8 py-8 max-w-7xl mx-auto bg-[#f9f9f9] min-h-full">
@@ -76,7 +78,7 @@ export const OrderFeed: React.FC<OrderFeedProps> = ({ onPreviewClick }) => {
             <p className="text-[#A7CDD9] text-sm font-semibold uppercase tracking-widest mb-1">
               Ganancias de Hoy
             </p>
-            <h4 className="text-4xl font-extrabold mb-6">Q245.50</h4>
+            <h4 className="text-4xl font-extrabold mb-6">{formatQuetzales(totalEarned)}</h4>
             
             <div className="flex justify-between items-center mb-2">
               <span className="text-[#A7CDD9]">Entregas completas:</span>
