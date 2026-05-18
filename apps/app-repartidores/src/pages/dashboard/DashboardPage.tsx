@@ -5,16 +5,21 @@ import { OrderFeed } from '../../features/browse-available-orders/ui/OrderFeed';
 import { StatusToggle } from '../../features/toggle-courier-status/ui/StatusToggle';
 import { StatusStepButton } from '../../features/update-order-status/ui/StatusStepButton';
 import { SupportPage } from '../support/SupportPage';
-// 1. IMPORTAMOS EL STORE
 import { useAuthStore } from '../../entities/session/model/auth.store';
+import { useWalletStore } from '../../entities/wallet/model/useWalletStore';
 
 export const DashboardPage: React.FC = () => {
   const activeOrder = useActiveOrderStore((state) => state.activeOrder);
   const [currentView, setCurrentView] = useState<'pedidos' | 'billetera' | 'soporte' | 'perfil'>('pedidos');
   
-// EXTRAEMOS AL USUARIO Y LA FUNCIÓN DE LOGOUT
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const fetchWalletSummary = useWalletStore((state) => state.fetchWalletSummary);
+
+  const handleRefreshWallet = () => {
+    const today = new Date().toISOString().split('T')[0];
+    fetchWalletSummary(today, today);
+  };
 
   return (
     <>
@@ -121,6 +126,7 @@ export const DashboardPage: React.FC = () => {
                         <StatusStepButton 
                           orderId={activeOrder.orderId} 
                           currentStatus={activeOrder.currentStatus} 
+                          onDelivered={handleRefreshWallet}
                         />
                       } 
                     />

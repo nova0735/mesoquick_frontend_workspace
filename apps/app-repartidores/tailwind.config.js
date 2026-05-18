@@ -3,6 +3,7 @@ export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
+    "../../packages/ui-kit/src/**/*.{js,ts,jsx,tsx}" // UI-Kit cross-compilation
   ],
   theme: {
     extend: {
