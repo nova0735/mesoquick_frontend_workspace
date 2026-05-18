@@ -35,9 +35,9 @@ export const OrderActionCard: React.FC<OrderActionCardProps> = ({ orderId, onSuc
         }`}
       >
         {isAccepting ? (
-          'Accepting Order...'
+          'Aceptando Pedido...'
         ) : (
-          'Accept Order'
+          'Aceptar Pedido'
         )}
       </button>
     </div>

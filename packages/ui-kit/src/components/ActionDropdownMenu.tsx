@@ -6,7 +6,7 @@ export interface ActionDropdownMenuProps {
   orderId: string;
 }
 
-export const ActionDropdownMenu: React.FC<ActionDropdownMenuProps> = ({ orderId }) => {
+export const ActionDropdownMenu: React.FC<ActionDropdownMenuProps> = ({ orderId: _orderId }) => {
   const actions = [
     'Asistente Virtual',
     'Hablar con representante',

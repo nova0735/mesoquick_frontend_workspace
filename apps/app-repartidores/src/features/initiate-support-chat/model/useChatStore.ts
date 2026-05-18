@@ -22,7 +22,7 @@ export const useChatStore = create<ChatState>()(
       {
         id: '2',
         content: 'Hola, soy Carlos de soporte. ¿En qué te puedo ayudar?',
-        sender: 'support',
+        sender: 'agent',
         timestamp: new Date().toISOString(),
       }
     ],
