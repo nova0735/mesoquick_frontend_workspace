@@ -7,11 +7,11 @@ import { useBankStore } from '../model/useBankStore';
 import { BankAccountType, UpdateBankAccountRequest } from '../../../entities/banking/model/types';
 
 const bankAccountSchema = z.object({
-  bankId: z.string().min(1, 'Please select a bank.'),
+  bankId: z.string().min(1, 'Por favor selecciona un banco.'),
   accountType: z.enum(['MONETARY', 'SAVINGS'], {
-    error: 'Please select an account type.'
+    error: 'Por favor selecciona un tipo de cuenta.'
   }),
-  accountNumber: z.string().min(10, 'Account number must be at least 10 digits.')
+  accountNumber: z.string().min(10, 'El número de cuenta debe tener al menos 10 dígitos.')
 });
 
 type BankAccountFormValues = z.infer<typeof bankAccountSchema>;
@@ -57,7 +57,7 @@ export const BankAccountForm: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="p-4 text-primary">Loading banking details...</div>;
+    return <div className="p-4 text-primary">Cargando detalles bancarios...</div>;
   }
 
   const bankOptions = institutions?.banks.map(bank => ({
@@ -65,39 +65,39 @@ export const BankAccountForm: React.FC = () => {
     label: bank.name
   })) || [];
 
-  const typeOptions = institutions?.accountTypes.map(type => ({
-    value: type,
-    label: type.charAt(0) + type.slice(1).toLowerCase()
-  })) || [];
+  const typeOptions = [
+    { value: 'MONETARY', label: 'Monetaria' },
+    { value: 'SAVINGS', label: 'Ahorro' }
+  ];
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-primary mb-4">Settlement Bank Account</h2>
+      <h2 className="text-xl font-bold text-primary mb-4">Cuenta Bancaria de Liquidación</h2>
       
       <SelectDropdown 
-        label="Bank Institution" 
+        label="Institución Bancaria" 
         options={bankOptions} 
         {...register('bankId')} 
         error={errors.bankId?.message}
       />
 
       <SelectDropdown 
-        label="Account Type" 
+        label="Tipo de Cuenta" 
         options={typeOptions} 
         {...register('accountType')} 
         error={errors.accountType?.message}
       />
 
       <InputText 
-        label="Account Number" 
+        label="Número de Cuenta" 
         type="text" 
         {...register('accountNumber')} 
         error={errors.accountNumber?.message} 
-        placeholder="e.g., 3049581029"
+        placeholder="ej. 3049581029"
       />
 
       <Button type="submit" isLoading={isUpdating} className="mt-4">
-        Update Bank Details
+        Actualizar Detalles Bancarios
       </Button>
     </form>
   );

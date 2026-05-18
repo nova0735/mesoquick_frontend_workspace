@@ -10,18 +10,18 @@ const profileSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   email: z.string().email().optional(),
-  address: z.string().min(5, 'Address must be at least 5 characters long.'),
-  phone: z.string().min(8, 'Phone must be at least 8 digits.'),
+  address: z.string().min(5, 'La dirección debe tener al menos 5 caracteres.'),
+  phone: z.string().min(8, 'El teléfono debe tener al menos 8 dígitos.'),
   vehicleType: z.enum(['MOTORCYCLE', 'BICYCLE', 'CAR']),
-  licensePlate: z.string().min(4, 'License plate is required.')
+  licensePlate: z.string().min(4, 'La placa es obligatoria.')
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
 
 const vehicleOptions = [
-  { value: 'MOTORCYCLE', label: 'Motorcycle' },
-  { value: 'BICYCLE', label: 'Bicycle' },
-  { value: 'CAR', label: 'Car' }
+  { value: 'MOTORCYCLE', label: 'Motocicleta' },
+  { value: 'BICYCLE', label: 'Bicicleta' },
+  { value: 'CAR', label: 'Automóvil' }
 ];
 
 export const ProfileEditForm: React.FC = () => {
@@ -69,43 +69,43 @@ export const ProfileEditForm: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="p-4 text-primary">Loading profile...</div>;
+    return <div className="p-4 text-primary">Cargando perfil...</div>;
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-primary mb-4">Edit Profile</h2>
+      <h2 className="text-xl font-bold text-primary mb-4">Editar Perfil</h2>
       
-      <InputText label="First Name" {...register('firstName')} disabled className="opacity-50"/>
-      <InputText label="Last Name" {...register('lastName')} disabled className="opacity-50"/>
-      <InputText label="Email" type="email" {...register('email')} disabled className="opacity-50"/>
+      <InputText label="Nombre" {...register('firstName')} disabled className="opacity-50"/>
+      <InputText label="Apellido" {...register('lastName')} disabled className="opacity-50"/>
+      <InputText label="Correo Electrónico" type="email" {...register('email')} disabled className="opacity-50"/>
 
       <hr className="border-gray-200 my-2" />
       
       <InputText 
-        label="Address" 
+        label="Dirección" 
         {...register('address')} 
         error={errors.address?.message}
       />
       <InputText 
-        label="Phone Number" 
+        label="Número de Teléfono" 
         {...register('phone')} 
         error={errors.phone?.message}
       />
       <SelectDropdown 
-        label="Vehicle Type" 
+        label="Tipo de Vehículo" 
         options={vehicleOptions} 
         {...register('vehicleType')} 
         error={errors.vehicleType?.message}
       />
       <InputText 
-        label="License Plate" 
+        label="Placa" 
         {...register('licensePlate')} 
         error={errors.licensePlate?.message}
       />
 
       <Button type="submit" isLoading={isUpdating} className="mt-4">
-        Save Changes
+        Guardar Cambios
       </Button>
     </form>
   );

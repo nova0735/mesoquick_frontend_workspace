@@ -8,14 +8,14 @@ import { usePasswordStore } from '../model/usePasswordStore';
 import { UpdatePasswordRequest } from '../api/password.api';
 
 const passwordSchema = z.object({
-  currentPassword: z.string().min(1, 'Current password is required.'),
+  currentPassword: z.string().min(1, 'La contraseña actual es obligatoria.'),
   newPassword: z.string()
-    .min(8, 'Password must be at least 8 characters long.')
-    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter.')
-    .regex(/[0-9]/, 'Password must contain at least one number.'),
+    .min(8, 'La contraseña debe tener al menos 8 caracteres.')
+    .regex(/[A-Z]/, 'La contraseña debe contener al menos una letra mayúscula.')
+    .regex(/[0-9]/, 'La contraseña debe contener al menos un número.'),
   confirmPassword: z.string()
 }).refine((data) => data.newPassword === data.confirmPassword, {
-  message: "Passwords don't match.",
+  message: "Las contraseñas no coinciden.",
   path: ["confirmPassword"],
 });
 
@@ -60,11 +60,11 @@ export const UpdatePasswordForm: React.FC = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold text-primary mb-4">Security Settings</h2>
+      <h2 className="text-xl font-bold text-primary mb-4">Configuración de Seguridad</h2>
       
       <div className="relative">
         <InputText 
-          label="Current Password" 
+          label="Contraseña Actual" 
           type={showCurrent ? "text" : "password"} 
           {...register('currentPassword')} 
           error={errors.currentPassword?.message}
@@ -74,7 +74,7 @@ export const UpdatePasswordForm: React.FC = () => {
 
       <div className="relative">
         <InputText 
-          label="New Password" 
+          label="Nueva Contraseña" 
           type={showNew ? "text" : "password"} 
           {...register('newPassword')} 
           error={errors.newPassword?.message}
@@ -84,7 +84,7 @@ export const UpdatePasswordForm: React.FC = () => {
 
       <div className="relative">
         <InputText 
-          label="Confirm New Password" 
+          label="Confirmar Nueva Contraseña" 
           type={showNew ? "text" : "password"} 
           {...register('confirmPassword')} 
           error={errors.confirmPassword?.message}
@@ -92,7 +92,7 @@ export const UpdatePasswordForm: React.FC = () => {
       </div>
 
       <Button type="submit" isLoading={isUpdating} className="mt-4">
-        Update Password
+        Actualizar Contraseña
       </Button>
     </form>
   );
