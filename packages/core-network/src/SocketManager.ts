@@ -21,7 +21,18 @@ class SocketManager {
       token = localStorage.getItem('access_token') || '';
     }
     
-    const url = `ws://localhost:5173${path}?token=${token}`;
+    const isSecure = window.location.protocol === 'https:';
+    const wsProtocol = isSecure ? 'wss://' : 'ws://';
+    
+    // Fallback inteligente: Usar la variable de entorno del Gateway o inferir del host actual
+    const gatewayUrl = import.meta.env?.VITE_API_GATEWAY_URL;
+    let baseHost = window.location.host;
+    
+    if (gatewayUrl) {
+      baseHost = gatewayUrl.replace(/^https?:\/\//, '');
+    }
+
+    const url = `${wsProtocol}${baseHost}${path}?token=${token}`;
 
     const ws = new WebSocket(url);
     this.connections[path] = ws;
