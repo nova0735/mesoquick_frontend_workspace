@@ -10,13 +10,10 @@ import { SelectDropdown, InputText, Button } from '@mesoquick/ui-kit';
 
 const fareSchema = z.object({
   reason: z.enum(['HEAVY_TRAFFIC', 'BAD_WEATHER', 'WRONG_ADDRESS'], {
-    errorMap: () => ({ message: "Selecciona una justificación" })
+    message: "Selecciona una justificación"
   }),
-  requestedAmount: z.preprocess(
-    (val) => Number(val),
-    z.number({ invalid_type_error: "Debes ingresar un número" })
-     .min(5, "El monto extra debe ser al menos Q5.00")
-  )
+  requestedAmount: z.number({ message: "Debe ser un número" })
+     .min(5, "Mínimo Q5")
 });
 
 type FareFormValues = z.infer<typeof fareSchema>;
@@ -67,7 +64,7 @@ export const FareIncreaseForm: React.FC<{ orderId?: string }> = ({ orderId }) =>
       <InputText
         label="Monto Extra (GTQ)"
         type="number"
-        {...register('requestedAmount')}
+        {...register('requestedAmount', { valueAsNumber: true })}
         error={errors.requestedAmount?.message}
         placeholder="ej. 10.00"
       />

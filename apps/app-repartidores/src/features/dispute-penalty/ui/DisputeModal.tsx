@@ -46,12 +46,6 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({ isOpen, onClose }) =
     } catch (err) {}
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setEvidenceFile(e.target.files[0]);
-    }
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-lg p-6">
@@ -94,7 +88,7 @@ export const DisputeModal: React.FC<DisputeModalProps> = ({ isOpen, onClose }) =
                 }}
                 className="text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-[#eaf4eb] file:text-[#3c606b] hover:file:bg-[#d5ebd7]"
               />
-              {errors.evidenceFile && <span className="mt-1 text-xs text-red-500">{errors.evidenceFile.message}</span>}
+              {/* {errors.evidenceFile && <span className="mt-1 text-xs text-red-500">{errors.evidenceFile.message}</span>} */}
               {evidenceFile && <span className="text-xs text-green-600 mt-1">Archivo adjuntado: {evidenceFile.name}</span>}
             </div>
             

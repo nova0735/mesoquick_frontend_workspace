@@ -2,12 +2,12 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { SelectDropdown, InputText, Button } from '@mesoquick/ui-kit';
+import { SelectDropdown, Button } from '@mesoquick/ui-kit';
 import { useDisputeStore } from '../model/useDisputeStore';
 
 const disputeSchema = z.object({
   reason: z.enum(['MERCHANT_DELAY', 'CLIENT_NO_SHOW', 'SYSTEM_ERROR'], {
-    errorMap: () => ({ message: "Selecciona un motivo" })
+    message: "Selecciona un motivo"
   }),
   details: z.string().min(10, "Explica con más detalle (mín. 10 caracteres)")
 });
@@ -32,8 +32,8 @@ export const DisputeForm: React.FC = () => {
     try {
       // Nota: El store espera un CreateDisputeRequest y opcionalmente un File
       await submitDispute({
-        reason: data.reason,
-        description: data.details,
+        ticketTitle: `Disputa: ${(data as any).reason}`,
+        detail: data.details,
       }, file || undefined);
       reset();
       setFile(null);
