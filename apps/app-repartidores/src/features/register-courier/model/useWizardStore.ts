@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { AuthAPI } from '@mesoquick/core-network';
 
 // 1. Definimos estrictamente todos los campos que pide Postman
 export interface RegisterDTO {
