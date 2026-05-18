@@ -12,6 +12,7 @@ import OrdersPage from '@pages/OrdersPage';
 import OrderTrackingPage from '@pages/OrderTrackingPage';
 import RegisterPage from '@pages/RegisterPage';
 import ProfilePage from '@pages/ProfilePage';
+import EditProfilePage from '@pages/EditProfilePage';
 import SupportPage from '@pages/SupportPage';
 import ChatbotPage from '@pages/ChatbotPage';
 import AgentChatPage from '@pages/AgentChatPage';
@@ -35,6 +36,7 @@ export default function AppRouter() {
           <Route path={ROUTES.ORDERS} element={<OrdersPage />} />
           <Route path={ROUTES.ORDER_TRACKING} element={<OrderTrackingPage />} />
           <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
+          <Route path={ROUTES.PROFILE_EDIT} element={<EditProfilePage />} />
           <Route path={ROUTES.SUPPORT} element={<SupportPage />} />
           <Route path={ROUTES.CHATBOT} element={<ChatbotPage />} />
           <Route path={ROUTES.AGENT_CHAT} element={<AgentChatPage />} />

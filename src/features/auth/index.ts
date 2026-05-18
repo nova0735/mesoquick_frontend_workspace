@@ -1,7 +1,7 @@
-
 export { RegisterForm } from './ui/RegisterForm';
 export { RegisterFormFields } from './ui/RegisterFormFields';
 export { SessionBadge } from './ui/SessionBadge';
+export { EditProfileForm } from './ui/EditProfileForm';
 
 export { useAuthStore } from './model/useAuthStore';
 export { useRegisterForm } from './model/useRegisterForm';
