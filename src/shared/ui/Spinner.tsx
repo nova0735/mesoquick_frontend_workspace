@@ -1,37 +1,38 @@
-import type { HTMLAttributes, ReactNode } from 'react';
 import { cn } from '@shared/lib/cn';
 
-type BadgeVariant = 'default' | 'success' | 'warning' | 'danger' | 'accent';
+type SpinnerSize = 'sm' | 'md' | 'lg';
 
-interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
-  children: ReactNode;
-  variant?: BadgeVariant;
+interface SpinnerProps {
+  size?: SpinnerSize;
+  className?: string;
+  label?: string;
 }
 
-const variantStyles: Record<BadgeVariant, string> = {
-  default: 'bg-border/50 text-text-heading',
-  success: 'bg-green-500/15 text-green-600 dark:text-green-400',
-  warning: 'bg-amber-500/15 text-amber-600 dark:text-amber-400',
-  danger: 'bg-red-500/15 text-red-600 dark:text-red-400',
-  accent: 'bg-accent-bg text-accent',
+const sizeStyles: Record<SpinnerSize, string> = {
+  sm: 'w-4 h-4 border-2',
+  md: 'w-6 h-6 border-2',
+  lg: 'w-10 h-10 border-[3px]',
 };
 
-export default function Badge({
-  children,
-  variant = 'default',
+/**
+ * Spinner de carga simple con animación de Tailwind.
+ * Usa border-current para heredar el color del contenedor.
+ */
+export default function Spinner({
+  size = 'md',
   className,
-  ...rest
-}: BadgeProps) {
+  label = 'Cargando',
+}: SpinnerProps) {
   return (
     <span
+      role="status"
+      aria-label={label}
       className={cn(
-        'inline-flex items-center px-2 py-0.5 rounded text-xs font-medium',
-        variantStyles[variant],
+        'inline-block rounded-full animate-spin',
+        'border-current border-t-transparent text-accent',
+        sizeStyles[size],
         className
       )}
-      {...rest}
-    >
-      {children}
-    </span>
+    />
   );
 }
