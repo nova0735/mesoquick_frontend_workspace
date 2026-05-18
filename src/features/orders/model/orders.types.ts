@@ -1,5 +1,4 @@
 // src/features/orders/model/orders.types.ts
-
 import type {
   Order,
   OrderItem,
@@ -18,14 +17,25 @@ export interface OrdersState {
 }
 
 // ─── Acciones del store ────────────────────────────────────────────────────
+// ─── Acciones del store ────────────────────────────────────────────────────
 export interface OrdersActions {
   fetchOrders: (userId: string) => Promise<void>;
   fetchOrderById: (orderId: string) => Promise<void>;
+  /**
+   * Agrega un pedido recién creado al store sin pasar por fetch.
+   * Lo usa el checkout después de confirmar.
+   */
+  addOrder: (order: Order) => void;
+  /**
+   * Cancela un pedido cambiando su estado a 'cancelled'.
+   * Solo permitido si el estado actual es 'pending' o 'confirmed'.
+   * Devuelve true si se canceló, false si no se pudo (estado no permitido).
+   */
+  cancelOrder: (orderId: string) => boolean;
   selectOrder: (order: Order | null) => void;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
   clearError: () => void;
 }
-
 // ─── Store completo ────────────────────────────────────────────────────────
 export type OrdersStore = OrdersState & OrdersActions;
 
