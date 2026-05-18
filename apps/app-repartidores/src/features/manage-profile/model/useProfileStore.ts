@@ -12,7 +12,15 @@ interface ProfileState {
 }
 
 export const useProfileStore = create<ProfileState>((set) => ({
-  profileData: null,
+  profileData: {
+    firstName: "Carlos",
+    lastName: "Méndez",
+    phone: "5555-1234",
+    vehicleType: "MOTORCYCLE",
+    licensePlate: "M-123ABC",
+    address: "Zona 3, Quetzaltenango",
+    email: "carlos.m@ejemplo.com"
+  },
   isLoading: false,
   isUpdating: false,
   error: null,

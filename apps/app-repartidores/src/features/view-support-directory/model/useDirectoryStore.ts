@@ -10,7 +10,22 @@ interface DirectoryState {
 }
 
 export const useDirectoryStore = create<DirectoryState>((set) => ({
-  data: null,
+  data: {
+    phones: [
+      {
+        id: "p1",
+        label: "Emergencias en ruta",
+        value: "+502 1500-0000"
+      }
+    ],
+    emails: [
+      {
+        id: "e1",
+        label: "Soporte General",
+        value: "ayuda@mesoquick.com"
+      }
+    ]
+  },
   isLoading: false,
   error: null,
   loadDirectory: async () => {

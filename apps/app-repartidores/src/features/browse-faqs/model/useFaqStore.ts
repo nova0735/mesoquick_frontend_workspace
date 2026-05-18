@@ -10,7 +10,30 @@ interface FaqState {
 }
 
 export const useFaqStore = create<FaqState>((set) => ({
-  data: null,
+  data: {
+    categories: [
+      {
+        categoryName: "Billetera y Pagos",
+        items: [
+          {
+            id: "1",
+            question: "¿Cuándo recibo mis transferencias?",
+            answer: "Las transferencias a cuentas asociadas son procesadas de manera inmediata."
+          }
+        ]
+      },
+      {
+        categoryName: "Rutas",
+        items: [
+          {
+            id: "2",
+            question: "¿Qué hago si el cliente no responde?",
+            answer: "Espera 5 minutos y utiliza el menú de 'Reportar un problema' para solicitar una cancelación sin multa."
+          }
+        ]
+      }
+    ]
+  },
   isLoading: false,
   error: null,
   loadFaqs: async () => {

@@ -12,7 +12,20 @@ interface ChatState {
 
 export const useChatStore = create<ChatState>()(
   subscribeWithSelector((set, get) => ({
-    messages: [],
+    messages: [
+      {
+        id: '1',
+        content: 'Hola, tengo un problema con mi pedido actual.',
+        sender: 'user',
+        timestamp: new Date(Date.now() - 60000).toISOString(),
+      },
+      {
+        id: '2',
+        content: 'Hola, soy Carlos de soporte. ¿En qué te puedo ayudar?',
+        sender: 'support',
+        timestamp: new Date().toISOString(),
+      }
+    ],
     isConnected: false,
     initializeChat: async () => {
       try {
