@@ -89,6 +89,7 @@ export const ChatWindow: React.FC = () => {
         </div>
         <div className="flex space-x-2">
           <InputText
+            label="Mensaje"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}

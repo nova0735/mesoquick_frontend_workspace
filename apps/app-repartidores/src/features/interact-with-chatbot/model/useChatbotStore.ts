@@ -10,7 +10,7 @@ interface ChatbotState {
 }
 
 export const useChatbotStore = create<ChatbotState>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector((set, _get) => ({
     messages: [],
     isTyping: false,
     sendMessage: async (message: string) => {

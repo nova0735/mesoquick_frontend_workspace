@@ -55,6 +55,7 @@ export const ChatbotWidget: React.FC = () => {
       <div className="p-4 border-t">
         <div className="flex space-x-2">
           <InputText
+            label="Mensaje"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
