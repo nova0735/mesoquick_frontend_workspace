@@ -35,20 +35,20 @@ export const PayDebtModal: React.FC<PayDebtModalProps> = ({ transactionId, amoun
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
       <div className="bg-white rounded-lg shadow-xl w-full max-w-sm p-6 flex flex-col gap-4">
-        <h2 className="text-xl font-bold text-red-500">Settle Cash Debt</h2>
+        <h2 className="text-xl font-bold text-red-500">Liquidar Deuda de Efectivo</h2>
         <p className="text-primary text-sm">
-          You are about to settle the debt for transaction <span className="font-semibold">{transactionId}</span>.
+          Estás por liquidar la deuda de la transacción <span className="font-semibold">{transactionId}</span>.
         </p>
         <p className="text-primary font-bold text-lg text-center bg-gray-100 py-2 rounded-md">
-          Amount to Pay: GTQ {amount.toFixed(2)}
+          Monto a Pagar: GTQ {amount.toFixed(2)}
         </p>
         
         <div className="flex gap-3 mt-4">
           <Button variant="secondary" onClick={onClose} disabled={isPaying} className="w-full">
-            Cancel
+            Cancelar
           </Button>
           <Button variant="primary" onClick={handlePayment} isLoading={isPaying} className="w-full">
-            Confirm Payment
+            Confirmar Pago
           </Button>
         </div>
       </div>

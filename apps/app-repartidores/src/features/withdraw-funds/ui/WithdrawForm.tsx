@@ -24,12 +24,12 @@ export const WithdrawForm: React.FC = () => {
 
   return (
     <div className="flex flex-col p-6 bg-white rounded-lg shadow-md items-center text-center">
-      <h3 className="text-lg font-bold text-primary mb-2">Available Earnings</h3>
+      <h3 className="text-lg font-bold text-primary mb-2">Ganancias Disponibles</h3>
       <p className="text-sm text-primary/70 mb-4">
-        Transfer your positive balance to your linked bank account. Processing is immediate.
+        Transfiere tu saldo a tu cuenta bancaria registrada. El procesamiento es inmediato.
       </p>
       <Button variant="primary" onClick={handleWithdraw} isLoading={isWithdrawing} className="w-full">
-        Transfer Funds to Bank Account
+        Transferir Fondos al Banco
       </Button>
     </div>
   );
