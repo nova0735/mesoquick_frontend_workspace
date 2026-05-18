@@ -19,9 +19,13 @@ export const useChatStore = create<ChatState>()(
         const history = await getChatHistory();
         set({ messages: history });
 
-        const url = 'ws://localhost:8080/ws/support/chat'; // Asumir URL, ajustar si necesario
-        SocketManager.connect(url);
-        SocketManager.subscribe('/ws/support/chat', (message: ChatMessage) => {
+        const isSecure = window.location.protocol === 'https:';
+        const wsProtocol = isSecure ? 'wss://' : 'ws://';
+        // Priorizar variable de entorno, si no existe, usar el host actual con el endpoint de Vite Proxy
+        const wsUrl = import.meta.env.VITE_WS_URL || `${wsProtocol}${window.location.host}/ws/support/chat`;
+
+        SocketManager.getInstance().connect(wsUrl);
+        SocketManager.getInstance().subscribe(wsUrl, (message: ChatMessage) => {
           get().addMessage(message);
         });
         set({ isConnected: true });
