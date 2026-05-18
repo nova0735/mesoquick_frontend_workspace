@@ -22,7 +22,6 @@ export const ActiveOrderPanel: React.FC<ActiveOrderPanelProps> = ({ StatusStepBu
         </h2>
         <ActionDropdownMenu 
           orderId={activeOrder.orderId || 'ORDEN_DESCONOCIDA'} 
-          onActionSelected={(action: string, id: string) => console.log(`Action ${action} triggered for order ${id}`)} 
         />
       </div>
 

@@ -35,11 +35,11 @@ export const DashboardPage: React.FC = () => {
           <div className="flex items-center space-x-3 mb-6 p-4 bg-white/10 rounded-2xl">
             <div className="w-12 h-12 bg-gray-200 flex-shrink-0 rounded-full flex items-center justify-center text-xl font-bold text-gray-500 uppercase">
               {/* Intentamos con nombre, si no, usamos el email, si no, una 'R' */}
-              {user?.name?.charAt(0) || user?.email?.charAt(0) || 'R'}
+              {(user as any)?.firstName?.charAt(0) || user?.email?.charAt(0) || 'R'}
             </div>
             <div>
               {/* Aquí también cambiamos a nombre o email */}
-              <p className="font-bold text-white">{user?.name || user?.email || 'Repartidor'}</p>
+              <p className="font-bold text-white">{(user as any)?.firstName || user?.email || 'Repartidor'}</p>
               <p className="text-xs text-[#56BD64]">Repartidor Activo</p>
             </div>
           </div>
