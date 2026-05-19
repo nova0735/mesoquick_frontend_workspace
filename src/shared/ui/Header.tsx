@@ -4,77 +4,118 @@ import { ShoppingBag, User, Headphones } from 'lucide-react';
 
 export default function Header() {
   return (
-    <header className="border-b border-border bg-bg sticky top-0 z-40">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-900 border-b border-emerald-950/50 shadow-lg shadow-emerald-950/20">
+      {/* Decoración sutil de fondo */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_rgba(52,211,153,0.15),_transparent_50%)] pointer-events-none" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_rgba(16,185,129,0.1),_transparent_50%)] pointer-events-none" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link
             to={ROUTES.HOME}
-            className="text-2xl font-semibold text-accent hover:opacity-80 transition-opacity"
+            className="group flex items-center gap-2 transition-opacity hover:opacity-90"
           >
-            Mesoquick
+            {/* Icono decorativo del logo */}
+            <div className="relative">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/30 transition-transform group-hover:scale-105">
+                <span className="text-white font-bold text-lg leading-none">M</span>
+              </div>
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-300 ring-2 ring-emerald-900 animate-pulse" />
+            </div>
+
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-bold text-white tracking-tight">
+                Meso<span className="text-emerald-300">quick</span>
+              </span>
+              <span className="text-[10px] text-emerald-300/70 font-medium tracking-wider uppercase mt-0.5">
+                Delivery
+              </span>
+            </div>
           </Link>
 
           {/* Navegación principal — visible en md+ */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav className="hidden md:flex items-center gap-1 bg-emerald-950/40 backdrop-blur-sm rounded-full p-1 border border-emerald-700/30">
             <HeaderLink to={ROUTES.HOME}>Inicio</HeaderLink>
             <HeaderLink to={ROUTES.CATALOG}>Explorar</HeaderLink>
             <HeaderLink to={ROUTES.ORDERS}>Mis pedidos</HeaderLink>
           </nav>
 
           {/* Acciones del lado derecho */}
-          <div className="flex items-center gap-2">
-            <Link
+          <div className="flex items-center gap-1">
+            <IconLink
               to={ROUTES.SUPPORT}
-              className="p-2 rounded hover:bg-accent-bg transition-colors text-text hover:text-accent"
-              aria-label="Soporte"
-              title="Soporte"
-            >
-              <Headphones className="w-5 h-5" />
-            </Link>
-
-            <Link
+              label="Soporte"
+              icon={<Headphones className="w-5 h-5" />}
+            />
+            <IconLink
               to={ROUTES.CART}
-              className="p-2 rounded hover:bg-accent-bg transition-colors text-text hover:text-accent"
-              aria-label="Carrito"
-              title="Carrito"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              {/* TODO: aquí Persona 2 va a montar el badge con la cantidad */}
-            </Link>
-
-            <Link
+              label="Carrito"
+              icon={<ShoppingBag className="w-5 h-5" />}
+            />
+            <IconLink
               to={ROUTES.PROFILE}
-              className="p-2 rounded hover:bg-accent-bg transition-colors text-text hover:text-accent"
-              aria-label="Mi perfil"
-              title="Mi perfil"
-            >
-              <User className="w-5 h-5" />
-            </Link>
+              label="Mi perfil"
+              icon={<User className="w-5 h-5" />}
+            />
           </div>
         </div>
       </div>
+
+      {/* Línea decorativa inferior con gradiente */}
+      <div className="h-px bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
     </header>
   );
 }
 
 /**
  * Link individual del nav con estado activo.
- * Usa NavLink de react-router para detectar la ruta activa automáticamente.
+ * Estilo "pill" sobre fondo oscuro.
  */
-function HeaderLink({ to, children }: { to: string; children: React.ReactNode }) {
+function HeaderLink({
+  to,
+  children,
+}: {
+  to: string;
+  children: React.ReactNode;
+}) {
   return (
     <NavLink
       to={to}
+      end={to === ROUTES.HOME}
       className={({ isActive }) =>
-        `px-3 py-2 rounded text-sm font-medium transition-colors ${
+        `px-4 py-1.5 rounded-full text-sm font-medium transition-all ${
           isActive
-            ? 'text-accent bg-accent-bg'
-            : 'text-text hover:text-accent hover:bg-accent-bg'
+            ? 'bg-white text-emerald-900 shadow-sm'
+            : 'text-emerald-100 hover:text-white hover:bg-emerald-700/50'
         }`
       }
     >
       {children}
     </NavLink>
+  );
+}
+
+/**
+ * Icono de acción del header derecho.
+ */
+function IconLink({
+  to,
+  label,
+  icon,
+}: {
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+}) {
+  return (
+    <Link
+      to={to}
+      aria-label={label}
+      title={label}
+      className="relative p-2.5 rounded-xl text-emerald-100 hover:text-white hover:bg-emerald-700/50 transition-all group"
+    >
+      {icon}
+    </Link>
   );
 }
