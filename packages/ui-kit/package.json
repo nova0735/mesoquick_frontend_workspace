@@ -1,0 +1,27 @@
+{
+  "name": "@mesoquick/ui-kit",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.tsx",
+  "module": "./src/index.tsx",
+  "types": "./src/index.tsx",
+  "exports": {
+    ".": "./src/index.tsx"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.3"
+  },
+  "dependencies": {
+    "@headlessui/react": "^2.2.10",
+    "@hookform/resolvers": "^5.2.2",
+    "@react-google-maps/api": "^2.20.8",
+    "react-hook-form": "^7.75.0",
+    "zod": "^4.4.2"
+  },
+  "devDependencies": {
+    "@types/google.maps": "^3.58.1"
+  }
+}
