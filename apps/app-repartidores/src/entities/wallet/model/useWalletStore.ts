@@ -21,19 +21,27 @@ export const useWalletStore = create<WalletState>((set) => ({
   fetchWalletSummary: async (startDate: string, endDate: string) => {
     set({ isLoading: true, error: null });
     try {
-      const response = await apiClient.get<WalletSummaryResponse>('/api/wallet/summary', {
+      // Petición a la API real del backend de logística
+      const response = await apiClient.get('/api/logistica/repartidores/me/metricas', {
         params: { startDate, endDate }
       });
+
+      const { total_entregas, total_cancelaciones, calificacion_promedio, tasa_exito } = response.data;
       
+      // Mapeamos los datos reales a nuestro estado. 
+      // Nota: balances.totalEarned se mantiene con el valor de tasa_exito o similar para UI.
       set({
-        balances: response.data.balances,
-        morosityState: response.data.morosityState,
-        transactions: response.data.transactions,
+        balances: {
+          positiveBalance: calificacion_promedio, // Usamos calificación como métrica visual
+          appDebt: total_cancelaciones,
+          totalEarned: total_entregas
+        },
+        morosityState: tasa_exito > 0.8 ? 'NONE' : 'GRACE_PERIOD_WARNING',
         isLoading: false
       });
     } catch (error: unknown) {
       set({ 
-        error: 'Error al obtener el resumen de billetera. Por favor intenta de nuevo más tarde.', 
+        error: 'Error al obtener las métricas del repartidor.', 
         isLoading: false 
       });
     }
