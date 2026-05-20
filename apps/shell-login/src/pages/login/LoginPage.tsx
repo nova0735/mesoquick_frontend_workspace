@@ -1,5 +1,3 @@
-// Importa la API desde tu paquete de red
-import { AuthAPI } from '@mesoquick/core-network';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '../../features/authenticate-user';
