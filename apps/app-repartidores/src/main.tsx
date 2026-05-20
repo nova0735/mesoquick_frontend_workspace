@@ -8,7 +8,6 @@ import { useAuthStore } from './entities/session/model/auth.store';
 useAuthStore.getState().hydrate();
 
 const rootElement = document.getElementById('root');
-...
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
