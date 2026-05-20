@@ -1,6 +1,6 @@
 // packages/core-network/src/auth.api.ts
 
-const BROKER_BASE_URL = 'https://broker-services-production.up.railway.app/api';
+const BROKER_BASE_URL = `${import.meta.env?.VITE_API_BASE_URL || 'https://broker-services-production.up.railway.app'}/api`;
 
 export interface RegisterPayload {
   email: string;
