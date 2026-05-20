@@ -1,21 +1,18 @@
-export type CourierStatus = 'AVAILABLE' | 'INACTIVE' | 'SUSPENDED';
+export type VehicleType = 'MOTORCYCLE' | 'BICYCLE' | 'CAR';
 
-export interface CourierProfile {
-  id: string;
+export interface CourierProfileResponse {
   firstName: string;
   lastName: string;
-  cui: string;
-  nit: string;
+  address: string;
   phone: string;
   email: string;
-  status: CourierStatus;
-  vehicle: {
-    type: 'MOTORCYCLE' | 'CAR' | 'BICYCLE';
-    plate: string;
-  };
-  bankAccount: {
-    bankName: string;
-    accountType: 'MONETARY' | 'SAVINGS';
-    accountNumber: string;
-  };
+  vehicleType: VehicleType;
+  licensePlate: string;
+}
+
+export interface UpdateProfileRequest {
+  address: string;
+  phone: string;
+  vehicleType: VehicleType;
+  licensePlate: string;
 }

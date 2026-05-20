@@ -3,3 +3,7 @@ dist/
 .env
 .env.*.local
 .DS_Store
+
+# Gemini CLI Local
+.gemini/
+GEMINI.md

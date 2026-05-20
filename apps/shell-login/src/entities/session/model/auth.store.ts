@@ -1,12 +1,10 @@
 import { create } from 'zustand';
-import { loginRequest } from '../../../features/authenticate-user/api/auth.api';
-import { apiClient } from '@mesoquick/core-network'; // Importamos el cliente para la validación silenciosa
+// 1. Importamos AuthAPI y apiClient desde tu paquete core-network
+import { AuthAPI, apiClient } from '@mesoquick/core-network'; 
 
 // ==========================================
 // MODEL LAYER: Estado y Lógica de Negocio
 // ==========================================
-// 🧩 FSD: Centraliza el estado de la feature. Orquesta las llamadas a la API
-// y expone el estado para que la UI (LoginForm) lo consuma pasivamente.
 
 interface User {
   id: string;
@@ -21,7 +19,6 @@ interface AuthState {
   isHydrating: boolean;
   error: string | null;
   token: string | null;
-  // Promesa de hidratación definida
   hydrate: () => Promise<void>;
 }
 
@@ -34,26 +31,43 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   user: null,
   isAuthenticated: false,
   isLoading: false,
-  isHydrating: true, // Empieza en true para que SessionProvider muestre carga
+  isHydrating: true, 
   error: null,
   token: localStorage.getItem('access_token'),
 
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      // Llamamos a la capa API aislada
-      const { tokens, user } = await loginRequest(email, password);
+      // 2. Usamos el endpoint real del Broker
+      const data = await AuthAPI.login({
+        email: email,
+        passwordRaw: password
+      });
       
-      localStorage.setItem('access_token', tokens.accessToken);
-      if (tokens.refreshToken) localStorage.setItem('refresh_token', tokens.refreshToken);
+      // 3. Guardamos el JWT devuelto por el broker
+      localStorage.setItem('access_token', data.token);
+      // Ojo: El broker actual en su documentación no menciona refresh_token, así que lo omitimos por ahora.
 
-      set({ user, token: tokens.accessToken, isAuthenticated: true, isLoading: false });
+      // 4. Mapeamos los datos del backend a tu interfaz local
+      const userFromBroker: User = {
+        id: String(data.usuario.id), 
+        email: data.usuario.email,
+        role: data.usuario.rol || data.usuario.role 
+      };
+
+      set({ 
+        user: userFromBroker, 
+        token: data.token, 
+        isAuthenticated: true, 
+        isLoading: false 
+      });
     } catch (err: any) {
-      const errorMessage = err.response && (err.response.status === 401 || err.response.status === 400)
-        ? 'Credenciales inválidas. Por favor, verifica tu correo y contraseña.'
-        : 'Ocurrió un error de red. Inténtalo de nuevo más tarde.';
-        
-      set({ error: errorMessage, isLoading: false });
+      // Manejo de errores
+      set({ 
+        error: 'Credenciales inválidas o error de conexión. Verifica tu correo y contraseña.', 
+        isLoading: false 
+      });
+      throw err; // Lanzamos el error para que la UI no haga la redirección
     }
   },
 
@@ -63,20 +77,17 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     set({ user: null, token: null, isAuthenticated: false, error: null });
   },
 
-  // 👇 AQUÍ ESTÁ LA FUNCIÓN FALTANTE 👇
   hydrate: async () => {
     const currentToken = localStorage.getItem('access_token');
     
-    // Si no hay token, apagamos la hidratación y lo dejamos como no autenticado
     if (!currentToken) {
       set({ isHydrating: false, isAuthenticated: false });
       return;
     }
 
     try {
-      // Si hay token, verificamos silenciosamente con el backend si sigue siendo válido
-      // Nota: Asegúrate de que el endpoint '/auth/me' exista en tu backend, 
-      // o ajusta la ruta si se llama diferente.
+      // Nota: Si el broker no tiene /auth/me, esto fallará. 
+      // Si falla, asegúrate de pedirle al backend el endpoint de validación correcto.
       const response = await apiClient.get('/auth/me');
       
       set({ 
@@ -85,7 +96,6 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
         isHydrating: false 
       });
     } catch (error) {
-      // Si el servidor rechaza el token (ej. expiró y el refresh falló), limpiamos todo
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       set({ 

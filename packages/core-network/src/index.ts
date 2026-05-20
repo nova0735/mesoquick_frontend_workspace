@@ -7,3 +7,5 @@
 
 export { apiClient } from './axios.interceptor';
 export { simulateRequest } from './api-mock';
+export { AuthAPI } from './auth.api';
+export { SocketManager } from './SocketManager';

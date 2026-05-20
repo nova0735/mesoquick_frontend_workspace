@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     set(initialState);
-    window.location.href = '/'; // Redirección forzada a la página de login
+    window.location.href = 'http://localhost:5173/login'; // Redirección explícita al Shell Login
   },
 
   /**
@@ -64,25 +64,38 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
    * Verifica si hay un token válido y recupera los datos del usuario.
    */
   hydrate: async () => {
-    const token = localStorage.getItem('access_token');
-    if (!token) {
-      set({ isHydrating: false });
-      return;
-    }
+  // 1. EXTRA: Detectar si el token viene en la URL desde el Shell-Login
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('token');
 
-    try {
-      // El apiClient ya tiene el interceptor que añade el token 'Bearer'
-      const response = await apiClient.get<User>('/auth/me');
-      set({ user: response.data, isAuthenticated: true });
-    } catch (error) {
-      // Si /me falla (ej. 401), el interceptor de apiClient intentará refrescar.
-      // Si el refresco también falla, el interceptor limpiará el storage y redirigirá.
-      // Si solo /me falla por otra razón, simplemente cerramos sesión aquí para estar seguros.
-      console.error("Hydration failed, logging out.", error);
-      useAuthStore.getState().logout();
-    } finally {
-      // Pase lo que pase, dejamos de "hidratar" para que la UI pueda renderizarse.
-      set({ isHydrating: false });
-    }
-  },
+  if (tokenFromUrl) {
+    // Si viene en la URL, lo guardamos en el LocalStorage de ESTE puerto (5174)
+    localStorage.setItem('access_token', tokenFromUrl);
+    
+    // Limpiamos la URL para que el token no se quede visible en la barra de direcciones
+    const newUrl = window.location.pathname + window.location.hash;
+    window.history.replaceState({}, document.title, newUrl);
+  }
+
+  // 2. Lógica original: Intentar obtener el token (ya sea el viejo o el nuevo que acabamos de guardar)
+  const token = localStorage.getItem('access_token');
+  
+  if (!token) {
+    set({ isHydrating: false });
+    return;
+  }
+
+  try {
+    // El apiClient ya tiene el interceptor que añade el token 'Bearer'
+    const response = await apiClient.get<User>('/auth/me');
+    set({ user: response.data, isAuthenticated: true });
+  } catch (error) {
+    console.error("Hydration failed, logging out.", error);
+    // Usamos el método interno para limpiar todo si el token no es válido
+    set({ user: null, isAuthenticated: false });
+    localStorage.removeItem('access_token');
+  } finally {
+    set({ isHydrating: false });
+  }
+},
 }));
