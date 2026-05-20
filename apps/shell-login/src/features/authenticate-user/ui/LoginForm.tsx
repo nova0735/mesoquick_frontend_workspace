@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../../entities/session/model/auth.store';
+import { ROLE_TO_APP_URL } from '../../../shared/config/app-registry';
 
 // ==========================================
 // FEATURE: Authenticate User
@@ -23,11 +24,24 @@ export const LoginForm: React.FC = () => {
     try {
       // El store hace todo el trabajo sucio
       await login(email, password);
-      // En tu handleSubmit después de await login(...)
-      const token = useAuthStore.getState().token; // Obtenemos el token recién guardado
-      window.location.href = `http://localhost:5174/dashboard?token=${token}`;
-      // Si el login no lanzó error, saltamos a la app de repartidores
-      window.location.href = 'http://localhost:5174/dashboard'; 
+
+      // Despachamos al usuario a su app según su rol (mapa en app-registry.ts)
+      const state = useAuthStore.getState();
+      const token = state.token;
+      const role = state.user?.role;
+
+      if (!token || !role) {
+        console.error('Login OK pero el store no tiene token/rol.');
+        return;
+      }
+
+      const targetUrl = ROLE_TO_APP_URL[role];
+      if (!targetUrl) {
+        console.error(`Rol "${role}" sin URL registrada en ROLE_TO_APP_URL (app-registry.ts).`);
+        return;
+      }
+
+      window.location.href = `${targetUrl}?token=${encodeURIComponent(token)}`;
     } catch (err) {
       console.error("Login fallido:", err);
       // El error visual ya se maneja mapeando la variable `error` del store

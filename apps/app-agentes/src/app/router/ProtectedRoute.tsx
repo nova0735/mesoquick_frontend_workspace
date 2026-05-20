@@ -1,4 +1,5 @@
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
 import { useSessionStore } from '../../entities/session';
 
@@ -7,17 +8,31 @@ import { useSessionStore } from '../../entities/session';
  *   1. Existe una sesión hidratada en el store.
  *   2. El rol del usuario es 'AGENT' — cualquier otro rol queda fuera de esta app.
  *
- * Cuando el login real de @mesoquick/shell-login esté disponible, este guard
- * sigue funcionando sin cambios: el contrato (mesoquick.session en localStorage
- * + AuthResponse.user.role) es el mismo.
+ * Sin sesión válida → redirige al shell-login (que vive en otro origen/puerto).
+ * Con sesión pero rol incorrecto → muestra pantalla de bloqueo + botón para
+ * volver al shell-login.
+ *
+ * TODO(env): cuando el monorepo exponga VITE_SHELL_LOGIN_URL, reemplazar la
+ * constante hardcoded por la variable.
  */
+const SHELL_LOGIN_URL = 'http://localhost:5173/';
+
 export function ProtectedRoute() {
   const user = useSessionStore((state) => state.user);
   const clear = useSessionStore((state) => state.clear);
-  const location = useLocation();
+
+  useEffect(() => {
+    if (!user) {
+      window.location.replace(SHELL_LOGIN_URL);
+    }
+  }, [user]);
 
   if (!user) {
-    return <Navigate to="/login" replace state={{ from: location }} />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-base font-sans">
+        <div className="text-primary text-sm">Redirigiendo al inicio de sesión…</div>
+      </div>
+    );
   }
 
   if (user.role !== 'AGENT') {
@@ -34,7 +49,11 @@ export function ProtectedRoute() {
           </p>
           <button
             type="button"
-            onClick={clear}
+            onClick={() => {
+              clear();
+              window.localStorage.removeItem('access_token');
+              window.location.replace(SHELL_LOGIN_URL);
+            }}
             className="px-4 py-2 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Cerrar sesión
