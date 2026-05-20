@@ -3,8 +3,9 @@ import { createBrowserRouter } from 'react-router-dom';
 // 0. Importamos el ErrorBoundary para proteger la aplicación
 import { ErrorBoundary } from '../providers/ErrorBoundary';
 
-// 1. Importamos el Cascarón Principal (El que tiene el Sidebar)
+// 1. Importamos el Cascarón Principal y el Guardián de rutas
 import { MainLayout } from '../layout/MainLayout';
+import { AuthGuard } from './AuthGuard';
 
 // 2. Importamos nuestras 4 páginas base
 import { DashboardPage } from '../../pages/dashboard/DashboardPage';
@@ -24,10 +25,12 @@ export const appRouter = createBrowserRouter([
   },
   {
     path: '/',
-    // Envolvemos el Layout Principal con el ErrorBoundary global
+    // Envolvemos el Layout Principal con el ErrorBoundary y el Guardián
     element: (
       <ErrorBoundary>
-        <MainLayout />
+        <AuthGuard>
+          <MainLayout />
+        </AuthGuard>
       </ErrorBoundary>
     ),
     children: [

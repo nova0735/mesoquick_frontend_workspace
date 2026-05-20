@@ -6,9 +6,13 @@ interface AuthGuardProps {
 }
 
 export const AuthGuard = ({ children }: AuthGuardProps) => {
-  const token = localStorage.getItem('accessToken');
+  const token = localStorage.getItem('access_token');
+  
   if (!token) {
-    return <Navigate to="/login" replace />;
+    const loginUrl = import.meta.env.VITE_APP_LOGIN_URL || 'http://localhost:5173/login';
+    window.location.href = loginUrl;
+    return null;
   }
+  
   return <>{children}</>;
 };
