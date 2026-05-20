@@ -9,6 +9,11 @@ export interface ChatMessage {
   role: ChatRole;
   content: string;
   timestamp: string; // ISO date
+  /**
+   * Solo para mensajes del agente: sugerencias de respuesta rápida
+   * que aparecen como chips clickeables.
+   */
+  followUps?: string[];
 }
 
 export type SupportChannel = 'chatbot' | 'agent';
@@ -24,4 +29,6 @@ export interface AgentChatState {
   messages: ChatMessage[];
   isConnected: boolean;
   agentName?: string;
+  /** Indica si el agente está "escribiendo" ahora mismo */
+  isTyping: boolean;
 }

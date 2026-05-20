@@ -3,15 +3,26 @@ import { Spinner } from '@shared/ui';
 import { User } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
+import FollowUpChips from './FollowUpChips';
+import TypingIndicator from './TypingIndicator';
 import { useAgentChat } from '../model/useAgentChat';
 
 export default function AgentChatWindow() {
-  const { messages, isConnected, agentName, sendMessage } = useAgentChat();
+  const { messages, isConnected, agentName, isTyping, sendMessage } =
+    useAgentChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll cuando llega un mensaje nuevo o cuando empieza/termina de escribir
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, isTyping]);
+
+  // Último mensaje del agente (para mostrar followUps solo en el más reciente)
+  const lastAgentMessageIdx = [...messages]
+    .reverse()
+    .findIndex((m) => m.role === 'agent');
+  const lastAgentMessageIndex =
+    lastAgentMessageIdx === -1 ? -1 : messages.length - 1 - lastAgentMessageIdx;
 
   return (
     <div className="flex flex-col h-[600px] max-h-[80vh] bg-bg border border-border rounded-lg overflow-hidden">
@@ -28,7 +39,7 @@ export default function AgentChatWindow() {
               </p>
               <p className="text-xs text-green-500 flex items-center gap-1">
                 <span className="w-2 h-2 rounded-full bg-green-500" />
-                En línea
+                {isTyping ? 'Escribiendo...' : 'En línea'}
               </p>
             </>
           ) : (
@@ -41,7 +52,7 @@ export default function AgentChatWindow() {
       </div>
 
       {/* Mensajes */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-bg/50">
         {!isConnected && (
           <div className="flex flex-col items-center justify-center h-full gap-3 text-text">
             <Spinner size="lg" />
@@ -49,9 +60,29 @@ export default function AgentChatWindow() {
           </div>
         )}
 
-        {messages.map((message) => (
-          <ChatMessage key={message.id} message={message} />
-        ))}
+        {messages.map((message, index) => {
+          const isLastAgentMessage =
+            message.role === 'agent' && index === lastAgentMessageIndex;
+          return (
+            <div key={message.id}>
+              <ChatMessage message={message} />
+              {/* FollowUps solo en el último mensaje del agente */}
+              {isLastAgentMessage &&
+                message.followUps &&
+                message.followUps.length > 0 &&
+                !isTyping && (
+                  <FollowUpChips
+                    suggestions={message.followUps}
+                    onSelect={sendMessage}
+                    disabled={isTyping}
+                  />
+                )}
+            </div>
+          );
+        })}
+
+        {/* Indicador "escribiendo..." */}
+        {isTyping && messages.length > 0 && <TypingIndicator />}
 
         <div ref={messagesEndRef} />
       </div>
@@ -59,8 +90,14 @@ export default function AgentChatWindow() {
       {/* Input */}
       <ChatInput
         onSend={sendMessage}
-        disabled={!isConnected}
-        placeholder={isConnected ? 'Escribe tu mensaje...' : 'Esperando agente...'}
+        disabled={!isConnected || isTyping}
+        placeholder={
+          !isConnected
+            ? 'Esperando agente...'
+            : isTyping
+              ? 'Carlos está escribiendo...'
+              : 'Escribí tu mensaje...'
+        }
       />
     </div>
   );

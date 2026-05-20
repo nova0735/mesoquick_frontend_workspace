@@ -1,4 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useAuthStore } from '@features/auth/model/useAuthStore';
+import { detectIntent } from '../utils/intentDetector';
+import { generateResponse, getInitialGreeting } from '../utils/agentResponses';
 import type { ChatMessage, AgentChatState } from './support.types';
 
 function generateId(): string {
@@ -6,85 +9,107 @@ function generateId(): string {
 }
 
 /**
- * Hook que simula chat con un agente humano.
- * Por ahora el agente responde con respuestas pregrabadas para demo.
- * Cuando el broker esté listo, esto se reemplaza por WebSocket real.
+ * Hook que simula chat con un agente humano usando detección de
+ * intenciones por keywords. Las respuestas son contextuales según
+ * el mensaje del usuario.
+ *
+ * Cuando llegue el broker real, este archivo se reemplaza por una
+ * conexión WebSocket al agente humano. Los componentes UI no cambian.
  */
 export function useAgentChat() {
+  const user = useAuthStore((s) => s.user);
   const [state, setState] = useState<AgentChatState>({
     messages: [],
     isConnected: false,
     agentName: undefined,
+    isTyping: false,
   });
 
-  // Simular conexión inicial del agente
+  // Conexión inicial del agente con saludo personalizado
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setState({
-        messages: [
-          {
-            id: generateId(),
-            role: 'agent',
-            content:
-              '¡Hola! Soy Carlos, agente de soporte de Mesoquick. ¿En qué te puedo ayudar?',
-            timestamp: new Date().toISOString(),
-          },
-        ],
+    const connectionTimer = setTimeout(() => {
+      setState((prev) => ({
+        ...prev,
         isConnected: true,
         agentName: 'Carlos',
-      });
-    }, 2000); // 2 segundos para simular conexión
+        isTyping: true,
+      }));
 
-    return () => clearTimeout(timer);
+      // Saludo después de "escribir" un momento
+      const greetingTimer = setTimeout(() => {
+        const greeting = getInitialGreeting(user?.name);
+        const message: ChatMessage = {
+          id: generateId(),
+          role: 'agent',
+          content: greeting.content,
+          timestamp: new Date().toISOString(),
+          followUps: greeting.followUps,
+        };
+
+        setState((prev) => ({
+          ...prev,
+          messages: [message],
+          isTyping: false,
+        }));
+      }, 1000);
+
+      return () => clearTimeout(greetingTimer);
+    }, 1500);
+
+    return () => clearTimeout(connectionTimer);
+    // Solo se ejecuta al montar el componente
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
-   * El usuario envía un mensaje. El agente "responde" después de un delay.
+   * El usuario envía un mensaje. El sistema detecta la intención
+   * y el agente "responde" con una respuesta contextual.
    */
   const sendMessage = useCallback((content: string) => {
-    if (!content.trim()) return;
+    const trimmed = content.trim();
+    if (!trimmed) return;
 
+    // 1. Agregar mensaje del usuario
     const userMessage: ChatMessage = {
       id: generateId(),
       role: 'user',
-      content,
+      content: trimmed,
       timestamp: new Date().toISOString(),
     };
 
     setState((prev) => ({
       ...prev,
       messages: [...prev.messages, userMessage],
+      isTyping: true,
     }));
 
-    // Simular respuesta del agente después de 1.5 segundos
-    setTimeout(() => {
-      const responses = [
-        'Entiendo tu situación. Déjame revisar tu caso un momento.',
-        'Gracias por la información. Estoy verificando los detalles.',
-        'Permíteme un segundo mientras consulto con el equipo.',
-        'Comprendo. Vamos a buscar la mejor solución para ti.',
-        'Tomé nota. ¿Algún detalle adicional que quieras agregar?',
-      ];
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+    // 2. Detectar intención del mensaje
+    const intent = detectIntent(trimmed);
+    const response = generateResponse(intent);
 
+    // 3. "Escribir" durante un tiempo realista y luego responder
+    setTimeout(() => {
       const agentMessage: ChatMessage = {
         id: generateId(),
         role: 'agent',
-        content: randomResponse,
+        content: response.content,
         timestamp: new Date().toISOString(),
+        followUps: response.followUps,
       };
 
       setState((prev) => ({
         ...prev,
         messages: [...prev.messages, agentMessage],
+        isTyping: false,
       }));
-    }, 1500);
+    }, response.delayMs);
   }, []);
 
   return {
     messages: state.messages,
     isConnected: state.isConnected,
     agentName: state.agentName,
+    isTyping: state.isTyping,
     sendMessage,
   };
 }
