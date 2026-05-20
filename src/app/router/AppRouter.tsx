@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ROUTES } from './routes';
+import ProtectedRoute from './ProtectedRoute';
 
 // Pages
 import HomePage from '@pages/HomePage';
@@ -10,6 +11,7 @@ import CheckoutPage from '@pages/CheckoutPage';
 import OrderConfirmationPage from '@pages/OrderConfirmationPage';
 import OrdersPage from '@pages/OrdersPage';
 import OrderTrackingPage from '@pages/OrderTrackingPage';
+import LoginPage from '@pages/LoginPage';
 import RegisterPage from '@pages/RegisterPage';
 import ProfilePage from '@pages/ProfilePage';
 import EditProfilePage from '@pages/EditProfilePage';
@@ -31,28 +33,64 @@ export default function AppRouter() {
         <Route element={<MainLayout />}>
           <Route path={ROUTES.HOME} element={<HomePage />} />
           <Route path={ROUTES.CATALOG} element={<CatalogPage />} />
-          <Route path={ROUTES.BUSINESS_DETAIL} element={<BusinessDetailPage />} />
+          <Route
+            path={ROUTES.BUSINESS_DETAIL}
+            element={<BusinessDetailPage />}
+          />
           <Route path={ROUTES.CART} element={<CartPage />} />
-          <Route path={ROUTES.ORDERS} element={<OrdersPage />} />
-          <Route path={ROUTES.ORDER_TRACKING} element={<OrderTrackingPage />} />
+          <Route
+            path={ROUTES.ORDERS}
+            element={
+              <ProtectedRoute>
+                <OrdersPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={ROUTES.ORDER_TRACKING}
+            element={
+              <ProtectedRoute>
+                <OrderTrackingPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path={ROUTES.PROFILE} element={<ProfilePage />} />
-          <Route path={ROUTES.PROFILE_EDIT} element={<EditProfilePage />} />
+          <Route
+            path={ROUTES.PROFILE_EDIT}
+            element={
+              <ProtectedRoute>
+                <EditProfilePage />
+              </ProtectedRoute>
+            }
+          />
           <Route path={ROUTES.SUPPORT} element={<SupportPage />} />
           <Route path={ROUTES.CHATBOT} element={<ChatbotPage />} />
           <Route path={ROUTES.AGENT_CHAT} element={<AgentChatPage />} />
         </Route>
 
-        {/* Rutas con layout de autenticación (sin header completo) */}
+        {/* Rutas de autenticación */}
         <Route element={<AuthLayout />}>
+          <Route path={ROUTES.LOGIN} element={<LoginPage />} />
           <Route path={ROUTES.REGISTER} element={<RegisterPage />} />
         </Route>
 
-        {/* Rutas con layout de checkout (simplificado, sin distracciones) */}
+        {/* Checkout PROTEGIDO: requiere sesión iniciada */}
         <Route element={<CheckoutLayout />}>
-          <Route path={ROUTES.CHECKOUT} element={<CheckoutPage />} />
+          <Route
+            path={ROUTES.CHECKOUT}
+            element={
+              <ProtectedRoute>
+                <CheckoutPage />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path={ROUTES.ORDER_CONFIRMATION}
-            element={<OrderConfirmationPage />}
+            element={
+              <ProtectedRoute>
+                <OrderConfirmationPage />
+              </ProtectedRoute>
+            }
           />
         </Route>
 

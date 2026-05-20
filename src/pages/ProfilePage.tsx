@@ -1,24 +1,59 @@
 import { useNavigate, Link } from 'react-router-dom';
-import { User, MapPin, Phone, Mail, LogOut, Pencil } from 'lucide-react';
+import {
+  User,
+  MapPin,
+  Phone,
+  Mail,
+  LogOut,
+  Pencil,
+  CreditCard,
+  LogIn,
+  UserPlus,
+} from 'lucide-react';
 import { Card, Button } from '@shared/ui';
 import { ROUTES } from '@app/router/routes';
 import { useAuthStore } from '@features/auth/model/useAuthStore';
 import { formatDate } from '@shared/lib/formatters';
+import { SavedCardsList } from '@features/payments';
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user, isAuthenticated, logout } = useAuthStore();
 
+  // Vista sin sesión: muestra opciones de Login + Registro
   if (!isAuthenticated || !user) {
     return (
-      <main className="max-w-2xl mx-auto px-4 py-6 text-center">
-        <p className="text-text/60 mb-4">Debes iniciar sesión para ver tu perfil</p>
-        <Button
-          onClick={() => navigate(ROUTES.REGISTER)}
-          className="bg-accent text-white px-6 py-2 rounded-xl hover:bg-accent/90 transition-colors"
-        >
-          Crear cuenta
-        </Button>
+      <main className="max-w-md mx-auto px-4 py-10 text-center space-y-6">
+        <div>
+          <div className="w-16 h-16 bg-accent-bg rounded-full flex items-center justify-center mx-auto mb-3">
+            <User className="w-7 h-7 text-accent" />
+          </div>
+          <h1 className="text-text-heading font-bold text-2xl">
+            Tu cuenta
+          </h1>
+          <p className="text-text/60 text-sm mt-1">
+            Iniciá sesión para ver tus pedidos, tarjetas y datos.
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Button
+            onClick={() => navigate(ROUTES.LOGIN)}
+            className="w-full flex items-center justify-center gap-2 bg-accent text-white hover:bg-accent/90 py-3 rounded-xl font-semibold"
+          >
+            <LogIn className="w-4 h-4" />
+            Iniciar sesión
+          </Button>
+
+          <Button
+            variant="outline"
+            onClick={() => navigate(ROUTES.REGISTER)}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium"
+          >
+            <UserPlus className="w-4 h-4" />
+            Crear cuenta nueva
+          </Button>
+        </div>
       </main>
     );
   }
@@ -72,7 +107,9 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-xs text-text/50">Correo</p>
-            <p className="text-sm text-text-heading font-medium">{user.email}</p>
+            <p className="text-sm text-text-heading font-medium">
+              {user.email}
+            </p>
           </div>
         </div>
 
@@ -82,7 +119,9 @@ export default function ProfilePage() {
           </div>
           <div>
             <p className="text-xs text-text/50">Teléfono</p>
-            <p className="text-sm text-text-heading font-medium">{user.phone}</p>
+            <p className="text-sm text-text-heading font-medium">
+              {user.phone}
+            </p>
           </div>
         </div>
 
@@ -97,6 +136,18 @@ export default function ProfilePage() {
             </p>
           </div>
         </div>
+      </Card>
+
+      {/* Métodos de pago */}
+      <Card className="p-4 border border-border space-y-4">
+        <div className="flex items-center gap-2">
+          <CreditCard className="w-5 h-5 text-accent" />
+          <h2 className="font-semibold text-text-heading">Métodos de pago</h2>
+        </div>
+        <p className="text-xs text-text/60 -mt-2">
+          Tus tarjetas se guardan de forma segura. Solo almacenamos los últimos 4 dígitos.
+        </p>
+        <SavedCardsList variant="profile" />
       </Card>
 
       {/* Cerrar sesión */}

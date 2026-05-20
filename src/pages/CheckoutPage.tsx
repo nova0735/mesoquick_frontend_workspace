@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 import { useCartStore } from '@features/cart/model/useCartStore';
 import { useCheckoutFlow } from '@features/checkout/model/useCheckoutFlow';
 import CheckoutStepper from '@features/checkout/ui/CheckoutStepper';
@@ -25,6 +26,16 @@ export default function CheckoutPage() {
 
   return (
     <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
+      {/* Flecha para volver al carrito */}
+      <button
+        onClick={() => navigate(ROUTES.CART)}
+        className="inline-flex items-center gap-1.5 text-sm text-text hover:text-accent transition-colors group"
+        aria-label="Volver al carrito"
+      >
+        <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-0.5" />
+        Volver al carrito
+      </button>
+
       {/* Stepper */}
       <CheckoutStepper currentStep={flow.currentStep} />
 

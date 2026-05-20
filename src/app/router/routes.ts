@@ -6,6 +6,7 @@
 export const ROUTES = {
   // Públicas
   HOME: '/',
+  LOGIN: '/login',
   REGISTER: '/registro',
 
   // Catálogo

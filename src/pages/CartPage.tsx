@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
-import { ShoppingBag } from 'lucide-react';
+import { ShoppingBag, Lock } from 'lucide-react';
 import { Button } from '@shared/ui';
 import { useCartStore } from '@features/cart/model/useCartStore';
+import { useAuthStore } from '@features/auth/model/useAuthStore';
 import CartItem from '@features/cart/ui/CartItem';
 import CartSummary from '@features/cart/ui/CartSummary';
 import EmptyCart from '@features/cart/ui/EmptyCart';
@@ -12,7 +13,23 @@ export default function CartPage() {
   const items = useCartStore((s) => s.items);
   const currentBusinessName = useCartStore((s) => s.currentBusinessName);
   const clearCart = useCartStore((s) => s.clearCart);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const hasItems = items.length > 0;
+
+  /**
+   * Al clickear "Ir al checkout":
+   * - Si está logueado → navega normal a /checkout
+   * - Si NO → redirige a /login, guardando /checkout como destino
+   */
+  const handleCheckout = () => {
+    if (isAuthenticated) {
+      navigate(ROUTES.CHECKOUT);
+    } else {
+      navigate(ROUTES.LOGIN, {
+        state: { from: ROUTES.CHECKOUT },
+      });
+    }
+  };
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
@@ -38,8 +55,23 @@ export default function CartPage() {
           {currentBusinessName && (
             <p className="text-sm text-text">
               Pedido de{' '}
-              <span className="font-semibold text-text-heading">{currentBusinessName}</span>
+              <span className="font-semibold text-text-heading">
+                {currentBusinessName}
+              </span>
             </p>
+          )}
+
+          {/* Aviso si no está logueado */}
+          {!isAuthenticated && (
+            <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <Lock className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-800">
+                <span className="font-semibold">
+                  Iniciá sesión para finalizar tu pedido.
+                </span>{' '}
+                Necesitamos saber a quién y dónde entregar.
+              </p>
+            </div>
           )}
 
           {/* Lista de items */}
@@ -58,8 +90,8 @@ export default function CartPage() {
 
           {/* Acciones */}
           <div className="space-y-2">
-            <Button fullWidth onClick={() => navigate(ROUTES.CHECKOUT)}>
-              Ir al checkout
+            <Button fullWidth onClick={handleCheckout}>
+              {isAuthenticated ? 'Ir al checkout' : 'Iniciar sesión y continuar'}
             </Button>
             <Button
               fullWidth

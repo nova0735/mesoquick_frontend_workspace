@@ -1,6 +1,4 @@
-// src/features/auth/ui/RegisterForm.tsx
-
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { UserPlus, AlertCircle } from 'lucide-react';
 import { Button } from '@shared/ui';
 import { ROUTES } from '@app/router/routes';
@@ -68,13 +66,13 @@ export function RegisterForm() {
 
       {/* Link a login */}
       <p className="text-center text-sm text-text/60">
-        ¿Ya tienes cuenta?{' '}
-        <button
-          onClick={() => navigate('/')}
+        ¿Ya tenés cuenta?{' '}
+        <Link
+          to={ROUTES.LOGIN}
           className="text-accent font-medium hover:underline"
         >
-          Inicia sesión
-        </button>
+          Iniciá sesión
+        </Link>
       </p>
     </div>
   );

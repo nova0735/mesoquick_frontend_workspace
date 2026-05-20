@@ -7,7 +7,16 @@ export interface RegisterFormData {
   defaultAddress: string;
 }
 
-export type RegisterFormErrors = Partial<Record<keyof RegisterFormData, string>>;
+export interface LoginFormData {
+  email: string;
+  password: string;
+}
+
+export type RegisterFormErrors = Partial<
+  Record<keyof RegisterFormData, string>
+>;
+
+export type LoginFormErrors = Partial<Record<keyof LoginFormData, string>>;
 
 export interface AuthUser {
   id: string;
@@ -27,11 +36,14 @@ export interface AuthState {
 
 export interface AuthActions {
   register: (data: RegisterFormData) => Promise<void>;
+  login: (data: LoginFormData) => Promise<void>;
   /**
    * Actualiza campos editables del perfil del usuario actual.
    * Por ahora solo telefono y direccion principal.
    */
-  updateProfile: (changes: Partial<Pick<AuthUser, 'phone' | 'defaultAddress'>>) => void;
+  updateProfile: (
+    changes: Partial<Pick<AuthUser, 'phone' | 'defaultAddress'>>
+  ) => void;
   logout: () => void;
   clearError: () => void;
 }
