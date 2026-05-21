@@ -25,10 +25,11 @@ export const LoginForm: React.FC = () => {
       await login(email, password);
       
       const token = useAuthStore.getState().token;
-      const appDestinoUrl = import.meta.env.VITE_APP_REPARTIDORES_URL || 'http://localhost:5174';
+      const targetAppUrl = import.meta.env.VITE_REPARTIDORES_APP_URL || import.meta.env.VITE_APP_REPARTIDORES_URL || 'http://localhost:5174';
 
       // Redirigimos a la app de repartidores pasando el token por URL (el dashboard de destino lo pescará)
-      window.location.href = `${appDestinoUrl}/dashboard?token=${token}`;
+      const cleanBaseUrl = targetAppUrl.replace(/\/$/, '');
+      window.location.href = `${cleanBaseUrl}?token=${token}`;
     } catch (err) {
       console.error("Login fallido:", err);
     }
