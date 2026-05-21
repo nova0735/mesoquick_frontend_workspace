@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     set(initialState);
-    window.location.href = 'http://localhost:5173/login'; // Redirección explícita al Shell Login
+    window.location.href = `${import.meta.env.VITE_SHELL_LOGIN_URL || 'http://localhost:5173'}/login`; // Redirección explícita al Shell Login
   },
 
   /**
