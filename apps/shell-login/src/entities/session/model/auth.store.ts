@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 // 1. Importamos AuthAPI y apiClient desde tu paquete core-network
-import { AuthAPI, apiClient } from '@mesoquick/core-network'; 
+import { apiClient } from '@mesoquick/core-network'; 
 
 // ==========================================
 // MODEL LAYER: Estado y Lógica de Negocio
