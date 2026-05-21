@@ -50,7 +50,7 @@ apiClient.interceptors.request.use(
     // Obtenemos el token del almacenamiento local (o Zustand persist)
     const token = localStorage.getItem('access_token');
     
-    if (token && config.headers) {
+    if (token && config.headers && !config.url?.includes('/auth/login')) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
     return config;
