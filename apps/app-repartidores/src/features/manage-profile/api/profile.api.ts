@@ -6,7 +6,7 @@ export interface ApiResponse {
 }
 
 export const fetchProfileDetails = async (): Promise<CourierProfileResponse> => {
-  const { data } = await apiClient.get<CourierProfileResponse>('/api/couriers/me');
+  const { data } = await apiClient.get<CourierProfileResponse>('/api/logistica/repartidores/me');
   return data;
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -30,6 +30,8 @@ export const ProfileEditForm: React.FC = () => {
   const isUpdating = useProfileStore((state) => state.isUpdating);
   const fetchProfile = useProfileStore((state) => state.fetchProfile);
   const updateProfile = useProfileStore((state) => state.updateProfile);
+  
+  const [successMsg, setSuccessMsg] = useState(false);
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema)
@@ -63,6 +65,8 @@ export const ProfileEditForm: React.FC = () => {
     
     try {
       await updateProfile(payload);
+      setSuccessMsg(true);
+      setTimeout(() => setSuccessMsg(false), 3000);
     } catch (err) {
       // Error handled in store
     }
@@ -76,6 +80,12 @@ export const ProfileEditForm: React.FC = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 w-full max-w-md bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-xl font-bold text-primary mb-4">Editar Perfil</h2>
       
+      {successMsg && (
+        <div className="p-4 mb-4 text-sm text-green-800 rounded-lg bg-green-50 font-medium border border-green-200">
+          ✅ Perfil actualizado correctamente.
+        </div>
+      )}
+
       <InputText label="Nombre" {...register('firstName')} disabled className="opacity-50"/>
       <InputText label="Apellido" {...register('lastName')} disabled className="opacity-50"/>
       <InputText label="Correo Electrónico" type="email" {...register('email')} disabled className="opacity-50"/>
