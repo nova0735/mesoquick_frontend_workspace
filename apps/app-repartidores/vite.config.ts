@@ -18,7 +18,8 @@ export default defineConfig(({ mode }) => {
           // Usamos la URL de producción de Railway
           target: 'https://broker-services-production.up.railway.app',
           changeOrigin: true,
-        secure: false, // Cambiado a false para evitar problemas de certificados SSL locales en Node
+          rewrite: (path) => path,
+          secure: false, // Cambiado a false para evitar problemas de certificados SSL locales en Node
         },
         '/ws': {
           // Usamos wss (Websocket Secure) para Railway

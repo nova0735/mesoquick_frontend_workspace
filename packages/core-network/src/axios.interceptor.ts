@@ -12,7 +12,7 @@ import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 // 3. Circuit Breaker: Desconexión y redirección de seguridad si falla el refresco.
 
 // Variables de entorno inyectadas por Vite (o valores por defecto robustos)
-const baseURL = import.meta.env?.VITE_API_BASE_URL || '/api';
+const baseURL = (import.meta.env?.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 const timeout = Number(import.meta.env?.VITE_TIMEOUT_MS) || 10000;
 
 // 1. Creación de la instancia
