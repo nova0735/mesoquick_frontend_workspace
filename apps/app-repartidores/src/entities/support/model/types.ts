@@ -56,3 +56,62 @@ export interface CreateDisputeResponse {
 export interface GenericSupportResponse {
   message: string;
 }
+
+// --- CHATBOT DTOs ---
+export interface ChatbotAction {
+  type: 'COMPENSATION' | 'REDIRECT_TO_HUMAN' | 'INFO';
+  amount?: number;
+}
+
+export interface ChatbotMessageRequest {
+  text: string;
+  orderId?: string;
+}
+
+export interface ChatbotMessageResponse {
+  replyText: string;
+  action: ChatbotAction;
+}
+
+// --- WEBSOCKET & RESOLUTION DTOs ---
+export type ResolutionStatus = 'APPROVED' | 'REJECTED';
+
+export interface TariffResolutionData {
+  orderId: string;
+  status: ResolutionStatus;
+  finalTariffAmount?: number;
+  agentNotes?: string;
+}
+
+export interface CancelResolutionData {
+  orderId: string;
+  status: ResolutionStatus;
+  penaltyApplied: boolean;
+  agentNotes?: string;
+}
+
+export interface WsNotificationPayload<T> {
+  eventType: 'TARIFF_RESOLUTION' | 'CANCEL_RESOLUTION' | 'SYSTEM_ALERT';
+  data: T;
+  timestamp: string;
+}
+
+// --- LIVE CHAT DTOs ---
+export type ChatSenderRole = 'COURIER' | 'AGENT' | 'SYSTEM';
+
+export interface ChatMessageOutgoing {
+  text: string;
+}
+
+export interface ChatMessageIncoming {
+  messageId: string;
+  senderId: string;
+  senderRole: ChatSenderRole;
+  senderName: string;
+  text: string;
+  timestamp: string;
+}
+
+export interface ChatHistoryResponse {
+  messages: ChatMessageIncoming[];
+}

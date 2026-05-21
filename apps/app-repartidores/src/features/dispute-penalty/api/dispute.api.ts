@@ -1,17 +1,18 @@
 import { apiClient } from '@mesoquick/core-network';
-import { CreateDisputeRequest, CreateDisputeResponse, UploadEvidenceResponse } from '../../../entities/support/model/types';
+import { CreateDisputeRequest, CreateDisputeResponse } from '../../../entities/support/model/types';
 
-export const uploadEvidenceFile = async (file: File): Promise<UploadEvidenceResponse> => {
+export const submitDisputeTicket = async (payload: CreateDisputeRequest, file?: File): Promise<CreateDisputeResponse> => {
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('ticketTitle', payload.ticketTitle);
+  formData.append('detail', payload.detail);
   
-  const { data } = await apiClient.post<UploadEvidenceResponse>('/api/support/upload-evidence', formData, {
+  if (file) {
+    formData.append('file', file);
+  }
+
+  const { data } = await apiClient.post<CreateDisputeResponse>('/api/logistica/incidencias', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   });
-  return data;
-};
-
-export const createDisputeTicket = async (payload: CreateDisputeRequest): Promise<CreateDisputeResponse> => {
-  const { data } = await apiClient.post<CreateDisputeResponse>('/api/support/disputes', payload);
+  
   return data;
 };
