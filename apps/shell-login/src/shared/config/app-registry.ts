@@ -14,7 +14,7 @@ export const REGISTRATION_LINKS = [
   /*{
     id: 'customer',
     label: 'Soy Cliente',
-    url: 'http://localhost:5175/registro', // Hipotética app de clientes
+    url: `${import.meta.env.VITE_APP_CLIENTES_URL || 'https://mesoquick-clientes.vercel.app'}/registro`, // Hipotética app de clientes
     color: '#3c606b' // Azul MesoQuick
   }*/
 ];
@@ -30,13 +30,12 @@ export const REGISTRATION_LINKS = [
  */
 export const ROLE_TO_APP_URL: Record<string, string> = {
   // Repartidores (app-repartidores)
-  // 🔥 CORREGIDO: Cuando inicien sesión con éxito, irán al dashboard en producción
   COURIER: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
   REPARTIDOR: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
   repartidor: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
 
-  // Agentes de Servicio al Cliente (app-agentes) - Se quedan en localhost temporalmente si no los han desplegado
-  AGENT: 'http://localhost:5176/',
-  AGENTE: 'http://localhost:5176/',
-  agente: 'http://localhost:5176/',
+  // 🔥 CORREGIDO POR AUDITORÍA: Agentes de Servicio al Cliente (app-agentes) 🔥
+  AGENT: `${import.meta.env.VITE_APP_AGENTES_URL || 'https://mesoquick-agentes.vercel.app'}/`,
+  AGENTE: `${import.meta.env.VITE_APP_AGENTES_URL || 'https://mesoquick-agentes.vercel.app'}/`,
+  agente: `${import.meta.env.VITE_APP_AGENTES_URL || 'https://mesoquick-agentes.vercel.app'}/`,
 };
