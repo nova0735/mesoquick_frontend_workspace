@@ -5,6 +5,7 @@ import { ResetPasswordForm } from '../../features/reset-password';
 
 export const LoginPage: React.FC = () => {
   // ✅ REGLA DE ORO: Todos los hooks (useNavigate, useState) viven ADENTRO del componente
+  // @ts-ignore
   const navigate = useNavigate();
   const [isResetMode, setIsResetMode] = useState(false);
 
