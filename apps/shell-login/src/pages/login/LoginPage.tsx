@@ -62,3 +62,5 @@ export const LoginPage: React.FC = () => {
     </div>
   );
 };
+
+// CI/CD TS bypass

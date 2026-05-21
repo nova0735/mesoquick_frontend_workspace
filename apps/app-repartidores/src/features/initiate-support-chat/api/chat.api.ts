@@ -21,3 +21,5 @@ export const uploadEvidence = async (file: File): Promise<{ url: string }> => {
   });
   return data;
 };
+
+// CI/CD Trigger: uploadEvidence is strictly exported.

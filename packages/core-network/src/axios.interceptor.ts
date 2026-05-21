@@ -112,7 +112,8 @@ apiClient.interceptors.response.use(
         localStorage.removeItem('refresh_token');
         localStorage.removeItem('user_context'); // Limpieza general
         
-        window.location.href = 'http://localhost:5173/login'; // Force Redirect to Shell Login
+        const loginUrl = import.meta.env?.VITE_SHELL_LOGIN_URL || '/login';
+        window.location.href = loginUrl;
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
