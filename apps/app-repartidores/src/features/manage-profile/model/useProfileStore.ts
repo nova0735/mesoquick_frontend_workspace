@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { CourierProfileResponse, UpdateProfileRequest } from '../../../entities/courier/model/types';
+import { useAuthStore } from '../../../entities/session/model/auth.store';
 import { fetchProfileDetails, updateProfileDetails } from '../api/profile.api';
 
 interface ProfileState {
@@ -21,7 +22,17 @@ export const useProfileStore = create<ProfileState>((set) => ({
     set({ isLoading: true, error: null });
     try {
       const data = await fetchProfileDetails();
-      set({ profileData: data, isLoading: false });
+      const sessionUser = useAuthStore.getState().user;
+
+      // Combinamos los datos de logística con la identidad de la sesión (JWT)
+      const mergedData: CourierProfileResponse = {
+        ...data,
+        firstName: sessionUser?.firstName || data.firstName || '',
+        lastName: sessionUser?.lastName || data.lastName || '',
+        email: sessionUser?.email || data.email || ''
+      };
+
+      set({ profileData: mergedData, isLoading: false });
     } catch (error: unknown) {
       set({ error: 'Failed to load profile data.', isLoading: false });
     }
