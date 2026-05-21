@@ -1,8 +1,29 @@
 import { Link, NavLink } from 'react-router-dom';
 import { ROUTES } from '@app/router/routes';
 import { ShoppingBag, User, Headphones } from 'lucide-react';
+import { useBrokerHealth } from '@shared/hooks/useBrokerHealth';
 
 export default function Header() {
+  // Estado en vivo del broker. El dot animado al lado del logo y un tooltip
+  // reflejan en tiempo real si estamos hablando con el broker o con el
+  // respaldo local. Cuando el broker se cae, el usuario ve un dot ámbar
+  // — sin alarmismo — y la app sigue funcionando con fallbacks.
+  const brokerStatus = useBrokerHealth();
+  const isOnline = brokerStatus === 'online';
+  const isChecking = brokerStatus === 'checking';
+
+  const dotColor = isOnline
+    ? 'bg-emerald-300'
+    : isChecking
+      ? 'bg-emerald-400/60'
+      : 'bg-amber-400';
+  const dotAnim = isOnline ? 'animate-pulse' : '';
+  const dotTitle = isOnline
+    ? 'Conectado al servicio en línea'
+    : isChecking
+      ? 'Verificando conexión...'
+      : 'Modo offline — usando respaldo local';
+
   return (
     <header className="sticky top-0 z-40 bg-gradient-to-r from-emerald-900 via-emerald-800 to-emerald-900 border-b border-emerald-950/50 shadow-lg shadow-emerald-950/20">
       {/* Decoración sutil de fondo */}
@@ -21,7 +42,11 @@ export default function Header() {
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md shadow-emerald-500/30 transition-transform group-hover:scale-105">
                 <span className="text-white font-bold text-lg leading-none">M</span>
               </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-300 ring-2 ring-emerald-900 animate-pulse" />
+              <div
+                className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full ring-2 ring-emerald-900 transition-colors ${dotColor} ${dotAnim}`}
+                title={dotTitle}
+                aria-label={dotTitle}
+              />
             </div>
 
             <div className="flex flex-col leading-none">

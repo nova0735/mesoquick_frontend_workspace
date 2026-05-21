@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { Spinner } from '@shared/ui';
-import { User } from 'lucide-react';
+import { User, Headphones, Loader2 } from 'lucide-react';
 import ChatMessage from './ChatMessage';
 import ChatInput from './ChatInput';
 import FollowUpChips from './FollowUpChips';
@@ -8,8 +8,16 @@ import TypingIndicator from './TypingIndicator';
 import { useAgentChat } from '../model/useAgentChat';
 
 export default function AgentChatWindow() {
-  const { messages, isConnected, agentName, isTyping, sendMessage } =
-    useAgentChat();
+  const {
+    messages,
+    isConnected,
+    agentName,
+    isTyping,
+    sendMessage,
+    canEscalate,
+    escalate,
+    isEscalating,
+  } = useAgentChat();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Auto-scroll cuando llega un mensaje nuevo o cuando empieza/termina de escribir
@@ -86,6 +94,36 @@ export default function AgentChatWindow() {
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Banner de escalación a humano — aparece solo si el último mensaje
+          del usuario amerita un agente real (queja, reembolso, etc) */}
+      {canEscalate && !isTyping && (
+        <div className="px-4 py-3 border-t border-border bg-amber-50 dark:bg-amber-950/30">
+          <div className="flex items-center gap-3">
+            <div className="flex-1 text-sm text-amber-900 dark:text-amber-100">
+              ¿Querés que escale tu caso a un agente humano de soporte?
+            </div>
+            <button
+              type="button"
+              onClick={escalate}
+              disabled={isEscalating}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-amber-600 hover:bg-amber-700 disabled:opacity-60 disabled:cursor-not-allowed text-white text-sm font-medium transition-colors"
+            >
+              {isEscalating ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Escalando...
+                </>
+              ) : (
+                <>
+                  <Headphones className="w-4 h-4" />
+                  Escalar a soporte
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Input */}
       <ChatInput

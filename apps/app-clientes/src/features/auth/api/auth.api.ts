@@ -108,9 +108,7 @@ export async function logoutUser(): Promise<void> {
 //  BROKER REAL (Railway) — integración con shell-login
 // ============================================================================
 
-const BROKER_BASE_URL =
-  (import.meta.env.VITE_BROKER_URL as string | undefined) ??
-  'https://broker-services-production.up.railway.app/api';
+const BROKER_BASE_URL = 'https://broker-services-production.up.railway.app/api';
 
 export const CLIENT_ROLE_ID = 1;
 

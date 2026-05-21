@@ -6,11 +6,23 @@ interface ChatMessageProps {
 }
 
 export default function ChatMessage({ message }: ChatMessageProps) {
-  // Mensaje del sistema (info, conectando, etc.)
+  // Mensaje del sistema (info, conectando, escalación, etc.)
   if (message.role === 'system') {
+    // Mensajes cortos (status de conexión) → pill discreta.
+    // Mensajes largos (confirmación de escalación) → tarjeta visible.
+    const isShort = message.content.length < 50 && !message.content.includes('\n');
+    if (isShort) {
+      return (
+        <div className="flex justify-center my-2">
+          <div className="px-3 py-1 bg-accent-bg text-accent text-xs rounded-full">
+            {message.content}
+          </div>
+        </div>
+      );
+    }
     return (
-      <div className="flex justify-center my-2">
-        <div className="px-3 py-1 bg-accent-bg text-accent text-xs rounded-full">
+      <div className="flex justify-center my-3">
+        <div className="max-w-[90%] px-4 py-3 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-100 text-sm rounded-lg whitespace-pre-line">
           {message.content}
         </div>
       </div>

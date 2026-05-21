@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCheckoutStore } from './useCheckoutStore';
 import { useCartStore } from '@features/cart/model/useCartStore';
 import { useOrdersStore } from '@features/orders';
+import { useAuthStore } from '@features/auth/model/useAuthStore';
 import { submitOrder } from '@features/checkout/api/checkout.api';
 import { ROUTES } from '@app/router/routes';
 import { userMock } from '@shared/mocks';
@@ -22,6 +23,7 @@ export function useCheckoutFlow() {
   const currentBusinessName = useCartStore((s) => s.currentBusinessName);
   const clearCart = useCartStore((s) => s.clearCart);
   const addOrder = useOrdersStore((s) => s.addOrder);
+  const authUser = useAuthStore((s) => s.user);
 
   const DELIVERY_FEE = 15;
   const total = cartSubtotal + DELIVERY_FEE - store.discount;
@@ -59,7 +61,7 @@ export function useCheckoutFlow() {
       // sin necesidad de re-fetch del backend.
       const newOrder: Order = {
         id: orderId,
-        userId: userMock.id,
+        userId: authUser?.id ?? userMock.id,
         businessId: currentBusinessId,
         businessName: currentBusinessName ?? '',
         status: 'pending',
