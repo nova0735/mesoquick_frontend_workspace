@@ -1,12 +1,11 @@
 import { apiClient } from '@mesoquick/core-network';
 
 /**
- * @description Ejecuta una petición PATCH a '/courier/status'.
- * Actualiza la disponibilidad de trabajo del repartidor ante el gateway.
+ * @description Actualiza el estado operativo del repartidor en el backend de logística.
  * 
- * @param isOnline Estado booleano que indica si está activo para recibir pedidos.
+ * @param estado Estado deseado: 'disponible' para recibir pedidos o 'desconectado'.
  */
-export const updateStatusRequest = async (isOnline: boolean) => {
-  const response = await apiClient.patch('/courier/status', { isOnline });
+export const updateCourierStatus = async (estado: 'disponible' | 'desconectado') => {
+  const response = await apiClient.patch('/api/logistica/repartidores/me/estado', { estado });
   return response.data;
 };
