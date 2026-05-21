@@ -7,3 +7,9 @@ dist/
 # Gemini CLI Local
 .gemini/
 GEMINI.md
+
+# Claude Code Local
+.claude/
+
+# Docker override local (cada dev puede mapear puertos según las apps que desarrolle)
+docker-compose.override.yml
