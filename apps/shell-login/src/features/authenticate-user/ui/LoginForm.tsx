@@ -29,7 +29,7 @@ export const LoginForm: React.FC = () => {
 
       // Redirigimos a la app de repartidores pasando el token por URL (el dashboard de destino lo pescará)
       const cleanBaseUrl = targetAppUrl.replace(/\/$/, '');
-      window.location.href = `${cleanBaseUrl}?token=${token}`;
+      console.log("LOGIN: Redirigiendo a:", `${cleanBaseUrl}?token=${token}`); window.location.href = `${cleanBaseUrl}?token=${token}`;
     } catch (err) {
       console.error("Login fallido:", err);
     }
