@@ -13,10 +13,11 @@ const CORE_NETWORK_TOKEN_KEY = 'access_token';
  * URL del shell-login a la que devolvemos al usuario cuando el handshake
  * falla (token inválido, expirado o rol no permitido).
  *
- * TODO(env): cuando el monorepo exponga una variable VITE_SHELL_LOGIN_URL,
- * leerla en vez de hardcodearla.
+ * Se lee de la variable de entorno VITE_SHELL_LOGIN_URL (definida en Vercel
+ * para producción) con fallback al puerto local del docker-compose dev.
  */
-const SHELL_LOGIN_URL = 'http://localhost:5173/';
+const SHELL_LOGIN_URL =
+  import.meta.env.VITE_SHELL_LOGIN_URL || 'http://localhost:5173/';
 
 function stripTokenFromUrl(): void {
   const url = new URL(window.location.href);
