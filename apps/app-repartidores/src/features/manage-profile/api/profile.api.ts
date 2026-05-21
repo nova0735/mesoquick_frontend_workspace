@@ -10,7 +10,8 @@ export const fetchProfileDetails = async (): Promise<CourierProfileResponse> => 
   return data;
 };
 
-export const updateProfileDetails = async (payload: UpdateProfileRequest): Promise<ApiResponse> => {
-  const { data } = await apiClient.put<ApiResponse>('/api/couriers/me', payload);
-  return data;
+export const updateProfileDetails = async (_payload: UpdateProfileRequest): Promise<ApiResponse> => {
+  // Mock Híbrido de Emergencia: El backend aún no soporta la actualización de estos campos.
+  await new Promise((resolve) => setTimeout(resolve, 800));
+  return { message: "Perfil actualizado exitosamente (Simulado)" };
 };

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { apiClient } from '@mesoquick/core-network';
-import { WalletBalances, MorosityState, TransactionRecord, WalletSummaryResponse } from './types';
+import { WalletBalances, MorosityState, TransactionRecord } from './types';
+import { fetchWalletSummary, payPendingDebt } from '../api/wallet.api';
 
 interface WalletState {
   balances: WalletBalances;
@@ -8,7 +8,8 @@ interface WalletState {
   transactions: TransactionRecord[];
   isLoading: boolean;
   error: string | null;
-  fetchWalletSummary: (startDate: string, endDate: string) => Promise<void>;
+  fetchWalletSummary: (courierId: string, startDate?: string, endDate?: string) => Promise<void>;
+  payDebt: (courierId: string, transactionId: string) => Promise<void>;
 }
 
 export const useWalletStore = create<WalletState>((set) => ({
@@ -18,32 +19,51 @@ export const useWalletStore = create<WalletState>((set) => ({
   isLoading: false,
   error: null,
 
-  fetchWalletSummary: async (startDate: string, endDate: string) => {
+  fetchWalletSummary: async (courierId: string, startDate?: string, endDate?: string) => {
     set({ isLoading: true, error: null });
     try {
-      // Petición a la API real del backend de logística
-      const response = await apiClient.get('/api/logistica/repartidores/me/metricas', {
-        params: { startDate, endDate }
-      });
-
-      const { total_entregas, total_cancelaciones, calificacion_promedio, tasa_exito } = response.data;
+      const result = await fetchWalletSummary(courierId, startDate, endDate);
       
-      // Mapeamos los datos reales a nuestro estado. 
-      // Nota: balances.totalEarned se mantiene con el valor de tasa_exito o similar para UI.
+      // Mapeo solicitado para el MVP:
+      // totalEarned = result.total_earned
+      // appDebt = result.total_cash_debt
+      // positiveBalance = total_earned - total_cash_debt
       set({
         balances: {
-          positiveBalance: calificacion_promedio, // Usamos calificación como métrica visual
-          appDebt: total_cancelaciones,
-          totalEarned: total_entregas
+          totalEarned: result.total_earned,
+          appDebt: result.total_cash_debt,
+          positiveBalance: result.total_earned - result.total_cash_debt
         },
-        morosityState: tasa_exito > 0.8 ? 'NONE' : 'GRACE_PERIOD_WARNING',
+        morosityState: result.morosity_state,
+        transactions: result.transactions || [],
         isLoading: false
       });
     } catch (error: unknown) {
       set({ 
-        error: 'Error al obtener las métricas del repartidor.', 
+        error: 'Error al obtener el resumen de la billetera.', 
         isLoading: false 
       });
+    }
+  },
+
+  payDebt: async (courierId: string, transactionId: string) => {
+    set({ isLoading: true, error: null });
+    try {
+      await payPendingDebt(courierId, transactionId);
+      
+      // Actualización local de transacciones
+      set((state) => ({
+        transactions: state.transactions.map((t) => 
+          t.transactionId === transactionId ? { ...t, isDebtSettled: true } : t
+        ),
+        isLoading: false
+      }));
+    } catch (error: unknown) {
+      set({ 
+        error: 'Error al procesar el pago de la deuda.', 
+        isLoading: false 
+      });
+      throw error;
     }
   }
 }));
