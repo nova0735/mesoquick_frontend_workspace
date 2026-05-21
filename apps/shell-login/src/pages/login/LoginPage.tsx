@@ -8,6 +8,15 @@ export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
   const [isResetMode, setIsResetMode] = useState(false);
 
+  // 🔥 NUEVA FUNCIÓN PARA REDIRIGIR A LA APP DE REPARTIDORES 🔥
+  const handleRegisterClick = () => {
+    // Leemos la variable de entorno, y si por alguna razón falla, le dejamos el localhost de respaldo
+    const urlRepartidores = import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app';
+    
+    // Redirección absoluta (hacia otro proyecto/dominio)
+    window.location.href = `${urlRepartidores}/registro`;
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f7f7f7] px-4">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
@@ -51,7 +60,7 @@ export const LoginPage: React.FC = () => {
             ¿No tienes una cuenta en MesoQuick?
           </p>
           <button
-            onClick={() => navigate('/register')}
+            onClick={handleRegisterClick}
             className="w-full mt-3 border-2 border-[#3c606b] text-[#3c606b] font-semibold py-2 rounded-lg hover:bg-[#3c606b] hover:text-white transition-colors duration-300"
           >
             Crear cuenta nueva
