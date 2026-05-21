@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-// Importamos el cliente de red centralizado que ya maneja interceptores
+// Importamos el cliente de red centralizado y jwt-decode
 import { apiClient } from '@mesoquick/core-network';
+import { jwtDecode } from 'jwt-decode';
 
 // ==========================================
 // MODEL: Global Authentication Store (Zustand)
@@ -31,25 +32,6 @@ interface AuthActions {
   hydrate: () => Promise<void>;
 }
 
-/**
- * Utilidad segura para decodificar JWT en el cliente.
- */
-function parseJwt(token: string) {
-  try {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      window.atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    return null;
-  }
-}
-
 const initialState: AuthState = {
   user: null,
   isAuthenticated: false,
@@ -66,17 +48,18 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     localStorage.setItem('access_token', tokens.accessToken);
     localStorage.setItem('refresh_token', tokens.refreshToken);
     
-    const payload = parseJwt(tokens.accessToken);
-    if (payload) {
+    try {
+      const payload: any = jwtDecode(tokens.accessToken);
       const userData: User = {
-        id: payload.sub || payload.id || '',
+        id: String(payload.id || payload.sub || ''),
         email: payload.email || '',
-        role: payload.role || 'COURIER',
+        role: payload.rol || payload.role || 'COURIER',
         firstName: payload.firstName || payload.first_name,
         lastName: payload.lastName || payload.last_name,
       };
       set({ user: userData, isAuthenticated: true });
-    } else {
+    } catch (e) {
+      console.error("Error decoding token in login:", e);
       set({ user: null, isAuthenticated: false });
     }
   },
@@ -88,7 +71,8 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     set(initialState);
-    window.location.href = 'http://localhost:5173/login';
+    const loginUrl = import.meta.env?.VITE_SHELL_LOGIN_URL || 'http://localhost:5173/login';
+    window.location.href = loginUrl;
   },
 
   /**
@@ -107,17 +91,21 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     const token = localStorage.getItem('access_token');
     
     if (token) {
-      const payload = parseJwt(token);
-      if (payload) {
+      try {
+        const payload: any = jwtDecode(token);
         const userData: User = {
-          id: payload.sub || payload.id || '',
+          id: String(payload.id || payload.sub || ''),
           email: payload.email || '',
-          role: payload.role || 'COURIER',
+          role: payload.rol || payload.role || 'COURIER',
           firstName: payload.firstName || payload.first_name,
           lastName: payload.lastName || payload.last_name,
         };
         set({ user: userData, isAuthenticated: true, isHydrating: false });
         return;
+      } catch (e) {
+        console.error("Error decoding token in hydrate:", e);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
       }
     }
 

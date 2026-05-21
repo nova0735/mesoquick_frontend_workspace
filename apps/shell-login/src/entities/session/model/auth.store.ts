@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-// 1. Importamos AuthAPI y apiClient desde tu paquete core-network
+// 1. Importamos apiClient y jwt-decode
 import { apiClient } from '@mesoquick/core-network'; 
+import { jwtDecode } from 'jwt-decode';
 
 // ==========================================
 // MODEL LAYER: Estado y Lógica de Negocio
@@ -45,18 +46,20 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
       });
       
       // 3. Guardamos el JWT devuelto por el broker (data.data.token)
-      localStorage.setItem('access_token', data.data.token);
+      const token = data.data.token;
+      localStorage.setItem('access_token', token);
 
-      // 4. Mapeamos los datos del backend a tu interfaz local
+      // 4. Mapeamos los datos del backend a tu interfaz local mediante el token
+      const decoded: any = jwtDecode(token);
       const userFromBroker: User = {
-        id: String(data.data.usuario.id), 
-        email: data.data.usuario.email,
-        role: data.data.usuario.rol || data.data.usuario.role 
+        id: String(decoded.id || decoded.sub), 
+        email: decoded.email,
+        role: decoded.rol || decoded.role 
       };
 
       set({ 
         user: userFromBroker, 
-        token: data.data.token, 
+        token: token, 
         isAuthenticated: true, 
         isLoading: false 
       });
@@ -85,16 +88,23 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
     }
 
     try {
-      // Nota: Si el broker no tiene /auth/me, esto fallará. 
-      // Si falla, asegúrate de pedirle al backend el endpoint de validación correcto.
-      const response = await apiClient.get('/auth/me');
+      // 🧩 FSD: Hidratación puramente en el cliente mediante decodificación de JWT.
+      // Eliminamos la dependencia de /auth/me para mejorar la velocidad de carga inicial.
+      const decoded: any = jwtDecode(currentToken);
       
+      const userFromToken: User = {
+        id: String(decoded.id || decoded.sub),
+        email: decoded.email,
+        role: decoded.rol || decoded.role
+      };
+
       set({ 
-        user: response.data, 
+        user: userFromToken, 
         isAuthenticated: true, 
         isHydrating: false 
       });
     } catch (error) {
+      console.error("Error al hidratar sesión (JWT inválido):", error);
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
       set({ 
