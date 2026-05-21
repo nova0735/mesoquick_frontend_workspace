@@ -7,7 +7,8 @@ export const REGISTRATION_LINKS = [
   {
     id: 'courier',
     label: 'Soy Repartidor',
-    url: 'http://localhost:5174/registro', // Redirige directamente al Wizard de Repartidores
+    // 🔥 CORREGIDO: Redirección dinámica al registro en producción
+    url: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/registro`, 
     color: '#56bd64' // Verde MesoQuick
   },
   /*{
@@ -29,11 +30,12 @@ export const REGISTRATION_LINKS = [
  */
 export const ROLE_TO_APP_URL: Record<string, string> = {
   // Repartidores (app-repartidores)
-  COURIER: 'http://localhost:5174/dashboard',
-  REPARTIDOR: 'http://localhost:5174/dashboard',
-  repartidor: 'http://localhost:5174/dashboard',
+  // 🔥 CORREGIDO: Cuando inicien sesión con éxito, irán al dashboard en producción
+  COURIER: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
+  REPARTIDOR: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
+  repartidor: `${import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app'}/dashboard`,
 
-  // Agentes de Servicio al Cliente (app-agentes)
+  // Agentes de Servicio al Cliente (app-agentes) - Se quedan en localhost temporalmente si no los han desplegado
   AGENT: 'http://localhost:5176/',
   AGENTE: 'http://localhost:5176/',
   agente: 'http://localhost:5176/',
