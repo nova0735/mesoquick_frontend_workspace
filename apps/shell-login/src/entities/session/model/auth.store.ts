@@ -38,26 +38,25 @@ export const useAuthStore = create<AuthState & AuthActions>((set) => ({
   login: async (email, password) => {
     set({ isLoading: true, error: null });
     try {
-      // 2. Usamos el endpoint real del Broker
-      const data = await AuthAPI.login({
-        email: email,
-        passwordRaw: password
+      // 2. Usamos el endpoint real del Broker vía apiClient para heredar interceptores
+      const { data } = await apiClient.post('/auth/login', {
+        email,
+        password
       });
       
-      // 3. Guardamos el JWT devuelto por el broker
-      localStorage.setItem('access_token', data.token);
-      // Ojo: El broker actual en su documentación no menciona refresh_token, así que lo omitimos por ahora.
+      // 3. Guardamos el JWT devuelto por el broker (data.data.token)
+      localStorage.setItem('access_token', data.data.token);
 
       // 4. Mapeamos los datos del backend a tu interfaz local
       const userFromBroker: User = {
-        id: String(data.usuario.id), 
-        email: data.usuario.email,
-        role: data.usuario.rol || data.usuario.role 
+        id: String(data.data.usuario.id), 
+        email: data.data.usuario.email,
+        role: data.data.usuario.rol || data.data.usuario.role 
       };
 
       set({ 
         user: userFromBroker, 
-        token: data.token, 
+        token: data.data.token, 
         isAuthenticated: true, 
         isLoading: false 
       });
