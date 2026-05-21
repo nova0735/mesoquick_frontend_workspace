@@ -11,7 +11,7 @@ export const LoginPage: React.FC = () => {
   // 🔥 NUEVA FUNCIÓN PARA REDIRIGIR A LA APP DE REPARTIDORES 🔥
   const handleRegisterClick = () => {
     // Leemos la variable de entorno, y si por alguna razón falla, le dejamos el localhost de respaldo
-    const urlRepartidores = import.meta.env.VITE_APP_REPARTIDORES_URL || 'http://localhost:5174';
+    const urlRepartidores = import.meta.env.VITE_APP_REPARTIDORES_URL || 'https://mesoquick-repartidores.vercel.app';
     
     // Redirección absoluta (hacia otro proyecto/dominio)
     window.location.href = `${urlRepartidores}/registro`;
