@@ -3,13 +3,34 @@ import { useAuthStore } from '../../../entities/session/model/auth.store';
 import { ROLE_TO_APP_URL } from '../../../shared/config/app-registry';
 
 // ==========================================
-// FEATURE: Authenticate User
+// DEMO BYPASS (mientras el broker no emite JWTs para AGENTES)
 // ==========================================
-// 🧩 NOTA DE ARQUITECTURA (FSD):
-// Este componente es una 'feature'. Contiene toda la lógica y UI para una
-// funcionalidad específica: el formulario de inicio de sesión.
-// Consume el 'model' (useAuthStore) para realizar la acción de login,
-// pero no sabe nada sobre otras features.
+// Permite entrar a app-agentes sin pasar por el broker ingresando estas
+// credenciales en el form normal. Construye un JWT sin firma — jwt-decode no
+// verifica firmas, así que app-agentes lo acepta tal cual.
+// TODO(broker): eliminar este bloque cuando el broker emita JWTs reales para AGENT.
+const DEMO_AGENT_CREDENTIALS = {
+  email: 'chris.ram@mesoquick.com',
+  password: 'chris123',
+};
+
+function base64UrlEncode(input: string): string {
+  return btoa(input).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function buildDemoAgentJwt(): string {
+  const header = { alg: 'none', typ: 'JWT' };
+  const nowSec = Math.floor(Date.now() / 1000);
+  const payload = {
+    sub: 'agent-chris-001',
+    rol: 'AGENT',
+    nombre: 'Christian Ramirez',
+    email: DEMO_AGENT_CREDENTIALS.email,
+    iat: nowSec,
+    exp: nowSec + 60 * 60 * 24,
+  };
+  return `${base64UrlEncode(JSON.stringify(header))}.${base64UrlEncode(JSON.stringify(payload))}.`;
+}
 
 export const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -21,6 +42,21 @@ export const LoginForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (
+      email === DEMO_AGENT_CREDENTIALS.email &&
+      password === DEMO_AGENT_CREDENTIALS.password
+    ) {
+      const demoToken = buildDemoAgentJwt();
+      const targetUrl = ROLE_TO_APP_URL.AGENT;
+      if (!targetUrl) {
+        console.error('ROLE_TO_APP_URL.AGENT no está registrado en app-registry.ts.');
+        return;
+      }
+      window.location.href = `${targetUrl}?token=${encodeURIComponent(demoToken)}`;
+      return;
+    }
+
     try {
       // El store hace todo el trabajo sucio
       await login(email, password);

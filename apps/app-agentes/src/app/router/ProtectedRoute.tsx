@@ -12,10 +12,11 @@ import { useSessionStore } from '../../entities/session';
  * Con sesión pero rol incorrecto → muestra pantalla de bloqueo + botón para
  * volver al shell-login.
  *
- * TODO(env): cuando el monorepo exponga VITE_SHELL_LOGIN_URL, reemplazar la
- * constante hardcoded por la variable.
+ * Se lee de VITE_SHELL_LOGIN_URL (Vercel) con fallback al puerto local
+ * del docker-compose dev.
  */
-const SHELL_LOGIN_URL = 'http://localhost:5173/';
+const SHELL_LOGIN_URL =
+  import.meta.env.VITE_SHELL_LOGIN_URL || 'http://localhost:5173/';
 
 export function ProtectedRoute() {
   const user = useSessionStore((state) => state.user);
