@@ -10,10 +10,10 @@ export const REGISTRATION_LINKS = [
     url: 'http://localhost:5174/registro', // Redirige directamente al Wizard de Repartidores
     color: '#56bd64' // Verde MesoQuick
   },
-  /*{
+  {
     id: 'customer',
     label: 'Soy Cliente',
-    url: 'http://localhost:5175/registro', // Hipotética app de clientes
-    color: '#3c606b' // Azul MesoQuick
-  }*/
+    url: 'https://mesoquick-app-clientes.vercel.app/registro',
+    color: '#3c606b'
+  }
 ];
