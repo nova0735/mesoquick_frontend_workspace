@@ -2,7 +2,6 @@
  * ⚙️ SHARED LAYER: App Registry
  * Centraliza los enlaces, puertos y configuración estática de las apps satélite.
  */
-
 export const REGISTRATION_LINKS = [
   {
     id: 'courier',
